@@ -1,7 +1,6 @@
 module.exports = class BaseComponent {
 	constructor() {
-		// this.copy = this.copy.bind(this);
-		// this.deletePassword = this.deletePassword.bind(this);
+		
 	}
 
 	copy(obj) {
@@ -31,5 +30,13 @@ module.exports = class BaseComponent {
 		const d = new Date(v || Date.now());
 		d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
 		return d.toISOString();
+	}
+	
+	returnErrMessage(res, msg, err) {
+		return res.send({
+			Code: 0,
+			Message: msg,
+			Data: err || '出现错误'
+		})
 	}
 }

@@ -5,6 +5,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+	nickname: {
+		type: String,
+		required: true
+	},
 	openId: {
 		type: String,
 		required: true
@@ -23,6 +27,27 @@ const userSchema = new Schema({
 	updateTime: {
 		type: Date,
 		default: Date.now
+	},
+	avatar: {
+		type: String,
+		default: '/default-img/default_avatar.png'
+	},
+	gender: {
+		type: Number,
+		enum: [-1, 0, 1],
+		default: -1
+	},
+	birthday: {
+		type: Date
+	},
+	photo_number: {
+		type: String
+	},
+	status: {
+		type: Number,
+		// 权限 1最高管理员 2正常用户
+		enum: [1, 2],
+		default: 2
 	}
 })
 

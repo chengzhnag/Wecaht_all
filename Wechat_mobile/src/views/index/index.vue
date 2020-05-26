@@ -3,30 +3,38 @@
 </template>
 
 <script>
+import { getUrlKey } from '@/utils/util.js';
 export default {
 	data() {
 		return {};
 	},
 	mounted() {
-		this.$store
-			.dispatch('index/getUserInfoByToken')
-			.then(res => {
-				console.log(res);
-				// this.$router.push({
-				// 	path: '/entrance'
-				// });
-				this.$router.push({
-					name: 'Entrance/Home'
-				});
-			})
-			.catch(err => {
-				console.log(err);
-				this.$router.push({
-					path: '/register'
-				});
-			});
+		console.log(process.env.NODE_ENV);
+		if (process.env.NODE_ENV == 'development') {
+			const _code = getUrlKey('code');
+			this.$store.commit('index/SET_TOKEN', _code);
+			this.$store.commit('index/SET_OPENID', _code);
+		}
+		this.funcGetToken();
 	},
-	methods: {}
+	methods: {
+		funcGetToken() {
+			this.$store
+				.dispatch('index/getUserInfoByToken')
+				.then(res => {
+					console.log(res);
+					this.$router.push({
+						name: 'Entrance/Home'
+					});
+				})
+				.catch(err => {
+					console.log(err);
+					this.$router.push({
+						path: '/register'
+					});
+				});
+		}
+	}
 };
 </script>
 

@@ -1,7 +1,8 @@
 <template>
 	<div class="register-box">
 		<van-icon name="vip-card-o" size="56px" />
-		<van-form @submit="onSubmit" class="form-box">
+		<van-form @submit="onSubmit" class="form-box" :show-error-message="false">
+			<van-field v-model="nickname" name="姓名" label="姓名" placeholder="请输入真实姓名" :rules="[{ required: true, message: '请输入真实姓名' }]" />
 			<van-field
 				v-model="mobile"
 				name="手机号"
@@ -20,7 +21,7 @@
 				placeholder="请再次输入密码"
 				:rules="[{ required: true, message: '请再次填写密码' }]"
 			/>
-			<div class="btn"><van-button round block type="info" native-type="submit">注册</van-button></div>
+			<div class="btn"><van-button block type="info" native-type="submit">注册</van-button></div>
 		</van-form>
 	</div>
 </template>
@@ -32,7 +33,8 @@ export default {
 		return {
 			mobile: '',
 			password: '',
-			againPassword: ''
+			againPassword: '',
+			nickname: ''
 		};
 	},
 	computed: {
@@ -53,6 +55,7 @@ export default {
 			let params = {
 				openId: this.$store.getters.openId || '',
 				mobile: this.mobile,
+				nickname: this.nickname,
 				password: passwrodMd5(this.password)
 			};
 			showLoading(this);
@@ -61,7 +64,11 @@ export default {
 				.then(res => {
 					console.log(res);
 					closeLoading(this);
-					this.$router.go(-1);
+					if (res.Code) {
+						this.$router.go(-1);
+					} else {
+						this.$toast(res.Message || '注册失败!');
+					}
 				})
 				.catch(err => {
 					closeLoading(this);
@@ -82,7 +89,7 @@ export default {
 	flex: 1;
 	padding: 0 20px;
 	background-color: #fff;
-	padding-bottom: 100px;
+	padding-bottom: 60px;
 	.form-box {
 		width: 100%;
 		margin-top: 20px;
@@ -97,8 +104,10 @@ export default {
 			content: none;
 		}
 		.btn {
-			margin: 16px;
 			margin-top: 30px;
+			.van-button {
+				border-radius: 5px;
+			}
 		}
 	}
 }

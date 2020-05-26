@@ -8,20 +8,6 @@ class Users extends BaseComponent {
 	constructor() {
 		super()
 	}
-	//获取活动列表
-	async getActivity(req, res, next) {
-		try {
-			const activities = await ActivityModel.find({}, '-_id');
-			res.send(activities)
-		} catch (err) {
-			console.log('获取活动数据失败');
-			res.send({
-				status: 0,
-				type: 'ERROR_DATA',
-				message: '获取活动数据失败'
-			})
-		}
-	}
 	getUserInfo(id) {
 		return new Promise((resolve, reject) => {
 			try {
@@ -124,6 +110,29 @@ class Users extends BaseComponent {
 				Message: '出错了',
 				Data: err
 			})
+		}
+	}
+	login(req, res, next) {
+		var body = req.body;
+		var reg = 11 && /^((1)[1-9]{1}[0-9]{1}\d{8})$/;
+		if (reg.test(body.mobile)) {
+			User.findOne({
+				mobile: body.mobile
+			}, (err, data) => {
+				if (err) {
+					return super.returnErrMessage(res, '查询用户失败', err);
+				}
+				if(body.password != data.password) {
+					return super.returnErrMessage(res, '密码错误, 请输入正确的密码');
+				}
+				res.send({
+					Code: 1,
+					Message: '登录成功',
+					Data: super.deletePassword(data)
+				})
+			})
+		} else {
+			return super.returnErrMessage(res, '手机号码格式不正确');
 		}
 	}
 }

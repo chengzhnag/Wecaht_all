@@ -18,6 +18,7 @@ global._config = config;
 // require路由
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+var adminRouter = require('./routes/admin');
 
 var app = express();
 
@@ -70,6 +71,7 @@ app.use(session({
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
+app.use('/admin', adminRouter);
 
 app.use(history());
 
