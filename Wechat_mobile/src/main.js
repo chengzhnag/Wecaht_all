@@ -7,7 +7,7 @@ import storage from "./utils/localstorage";
 import 'amfe-flexible/index.js';
 
 
-import { Lazyload, Toast, Icon, Notify, Cell, CellGroup, Form, Field, Button, Tabbar, TabbarItem, Swipe, SwipeItem, Tag } from 'vant';
+import { Lazyload, Toast, Icon, Notify, Cell, CellGroup, Form, Field, Button, Tabbar, TabbarItem, Swipe, SwipeItem, Tag, Uploader } from 'vant';
 
 Vue.use(Lazyload, {
   lazyComponent: true,
@@ -28,6 +28,7 @@ Vue.use(TabbarItem);
 Vue.use(Swipe);
 Vue.use(SwipeItem);
 Vue.use(Tag);
+Vue.use(Uploader);
 
 Vue.prototype.$storage = storage;
 

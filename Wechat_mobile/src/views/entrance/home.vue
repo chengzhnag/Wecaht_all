@@ -6,7 +6,7 @@
 			</van-swipe>
 		</div>
 		<div class="tag-box">
-			<van-tag plain>签到</van-tag>
+			<van-tag plain @click="goToAdd">去添加</van-tag>
 			<van-tag plain>张三</van-tag>
 			<van-tag plain>精品原创</van-tag>
 			<van-tag plain>资源教程</van-tag>
@@ -48,7 +48,11 @@ export default {
 		};
 	},
 	mounted() {},
-	methods: {}
+	methods: {
+		goToAdd() {
+			this.$router.push('addCustomer');
+		}
+	}
 };
 </script>
 

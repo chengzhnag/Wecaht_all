@@ -21,5 +21,7 @@ module.exports = {
 		basicToken: 'https://api.weixin.qq.com/cgi-bin/token?',
 		getCode: 'https://open.weixin.qq.com/connect/oauth2/authorize?',
 		authToken: 'https://api.weixin.qq.com/sns/oauth2/access_token?'
-	}
+	},
+	uploadPath: './public/uploads',
+	uploadUrl: 'http://zsjustn.top'
 }

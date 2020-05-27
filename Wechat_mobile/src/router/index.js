@@ -52,6 +52,15 @@ const routes = [{
 		}
 	},
 	{
+		path: '/addCustomer',
+		name: 'AddCustomer',
+		component: () => import( /* webpackChunkName: "index" */ '../views/addCustomer.vue'),
+		meta: {
+			keepAlive: false,
+			title: '添加顾客'
+		}
+	},
+	{
 		// 404 page must be placed at the end !!!
 		path: '/404',
 		name: '404',
