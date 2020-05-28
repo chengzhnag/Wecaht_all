@@ -3,6 +3,9 @@
 const Customer = require('../../models/customer/customer.js');
 // const dtime = require('time-formater');
 const BaseComponent = require('../../utils/baseComponent.js');
+const {
+	validationResult
+} = require('express-validator');
 
 
 class Customers extends BaseComponent {
@@ -10,6 +13,13 @@ class Customers extends BaseComponent {
 		super()
 	}
 	async addCustomer(req, res, next) {
+		const errors = validationResult(req);
+		console.log(errors);
+		if (!errors.isEmpty()) {
+			return res.status(422).json({
+				errors: errors.array()
+			});
+		}
 		var body = req.body;
 		try {
 			const info = await Customer.findOne({
@@ -33,7 +43,7 @@ class Customers extends BaseComponent {
 		if (!req.file) {
 			return super.returnErrMessage(res, '上传文件失败');
 		}
-		req.file.path = req.file.path.replace(/^public/g, _config.uploadUrl);
+		// req.file.path = req.file.path.replace(/^public/g, _config.uploadUrl);
 		res.send({
 			Code: 1,
 			Message: '上传成功',

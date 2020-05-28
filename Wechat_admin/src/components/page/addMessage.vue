@@ -167,7 +167,7 @@ export default {
                     }
                     this.$axios.post(url, param)
                         .then(function(response) {
-                            if (response.data.statusCode === 1) {
+                            if (response.data.Code === 1) {
                                 _this.$router.push('/');
                                 _this.$refs[formName].resetFields();
                                 _this.fileList = [];
@@ -178,7 +178,7 @@ export default {
                                 }
                                 
                             } else {
-                                _this.$message.error(response.data.message)
+                                _this.$message.error(response.data.Message)
                             }
 
                         })
@@ -196,7 +196,7 @@ export default {
             this.$message.error(file.name + '上传失败');
         },
         uploadSuccess(res, file, fileList) {
-            if (res.statusCode === 1) {
+            if (res.Code === 1) {
                 this.fileList = fileList;
                 console.log(fileList);
             }

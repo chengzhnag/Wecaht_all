@@ -127,13 +127,14 @@ class Users extends BaseComponent {
 		try {
 			const info = await User.findOne({
 				mobile: body.mobile
-			}, '-__v -password');
+			}, '-__v');
 			if (!info) {
 				return super.returnErrMessage(res, '该手机号未注册, 请先去注册');
 			} else {
 				if (body.password != info.password) {
 					return super.returnErrMessage(res, '密码错误, 请输入正确的密码');
 				}
+				super.insertLoginLog(info, req);
 				res.send({
 					Code: 1,
 					Message: '登录成功',

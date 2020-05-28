@@ -22,8 +22,14 @@ const customerSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
-	'qualityAssuranceNum': String,
-	'hydraulicIntegral': String,
+	'qualityAssuranceNum': {
+		type: String,
+		required: true
+	},
+	'hydraulicIntegral': {
+		type: String,
+		required: true
+	},
 	'dealers': String,
 	'createTime': {
 		type: Date,

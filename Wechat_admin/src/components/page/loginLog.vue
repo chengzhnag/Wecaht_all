@@ -55,12 +55,13 @@ export default {
                 }
             }).then((res) => {
                 console.log(res);
-                if (res.data.statusCode === 1) {
-                    for (let i = 0; i < res.data.data.length; i++) {
-                        res.data.data[i].count = (this.cur_page - 1) * 10 + i + 1;
-                        res.data.data[i].permissions = res.data.data[i].permissions === 1 ? ' 管理员' : '普通用户';
+                if (res.data.Code === 1) {
+					let _data = res.data.Data;
+                    for (let i = 0; i < _data.length; i++) {
+                        _data[i].count = (this.cur_page - 1) * 10 + i + 1;
+                        _data[i].permissions = _data[i].permissions === 1 ? ' 管理员' : '普通用户';
                     }
-                    this.tableData = res.data.data;
+                    this.tableData = _data;
                     this.totalCount = res.data.totalCount;
                     console.log(this.totalCount);
                 } else {

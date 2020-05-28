@@ -93,12 +93,13 @@ export default {
                 }
             }).then((res) => {
                 console.log(res);
-                if (res.data.statusCode === 1) {
-                    for (let i = 0; i < res.data.data.length; i++) {
-                        res.data.data[i].count = (this.cur_page - 1) * 10 + i + 1;
-                        res.data.data[i].createTime = this.filterTime(res.data.data[i].createTime);
+                if (res.data.Code === 1) {
+					let _data = res.data.Data;
+                    for (let i = 0; i < _data.length; i++) {
+                        _data[i].count = (this.cur_page - 1) * 10 + i + 1;
+                        _data[i].createTime = this.filterTime(_data[i].createTime);
                     }
-                    this.tableData = res.data.data;
+                    this.tableData = _data;
                     this.totalCount = res.data.totalCount;
                     console.log(this.totalCount);
                 } else {
@@ -136,12 +137,12 @@ export default {
                 }
             }).then((res) => {
                 console.log(res);
-                if (res.data.statusCode === 1) {
+                if (res.data.Code === 1) {
                     this.$message.success('删除成功');
                     this.delVisible = false;
                     this.tableData.splice(this.idx, 1);
                 } else {
-                    this.$message.error(res.data.msg);
+                    this.$message.error(res.data.Message);
                     this.delVisible = false;
                 }
 
