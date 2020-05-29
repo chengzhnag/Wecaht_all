@@ -19,12 +19,29 @@ router.post('/addCustomer', [
 	check('hydraulicMobil').notEmpty(),
 	check('qualityAssuranceNum').notEmpty(),
 	check('hydraulicIntegral').notEmpty(),
+	check('createrId').notEmpty(),
 	check('uploadPhotos').isArray()
 ], Customers.addCustomer);
 
 router.post('/upload', upload.single('myfile'), Customers.upload);
 
 router.get('/getLoginLog', LoginLogs.getLoginLog);
+
+router.get('/getOwnerList', Customers.getOwnerList);
+
+router.post('/deleteOwner', Customers.deleteOwner);
+
+router.post('/updateOwner', [
+	check('customerName').notEmpty(),
+	check('customerMobil').notEmpty(),
+	check('customerAdress').notEmpty(),
+	check('hydraulicName').notEmpty(),
+	check('hydraulicMobil').notEmpty(),
+	check('qualityAssuranceNum').notEmpty(),
+	check('hydraulicIntegral').notEmpty(),
+	check('createrId').notEmpty(),
+	check('uploadPhotos').isArray()
+], Customers.updateOwner);
 
 router.get('/getOperationLog', OperationLogs.getOperationLog);
 

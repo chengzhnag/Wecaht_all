@@ -3,6 +3,7 @@ const mongoose = require('mongoose')
 // 表模型
 const operationLog = new mongoose.Schema({
 	'userName': String,
+	'createrId': String,
 	'landTime': String,
 	'landIp': String,
 	'operationText': String,

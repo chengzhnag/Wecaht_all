@@ -1,6 +1,7 @@
 'use strict';
 
 const LoginLog = require('../../models/loginLog/loginLog.js');
+const User = require('../../models/user/user.js');
 // const dtime = require('time-formater');
 const BaseComponent = require('../../utils/baseComponent.js');
 
@@ -13,9 +14,16 @@ class LoginLogs extends BaseComponent {
 		const {
 			pageNum = 1, pageSize = 10
 		} = req.query;
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		try {
+			const info = await User.findOne({
+				'_id': _id
+			});
 			const count = await LoginLog.estimatedDocumentCount();
-			const data = await LoginLog.find({})
+			let params = {};
+			info.status == 1 ? '' : params.createrId = _id;
+			const data = await LoginLog.find(params)
 				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
 				.limit(parseInt(pageSize, 10))
 				.sort({

@@ -4,9 +4,9 @@
             <el-col :span="8">
                 <el-card shadow="hover" class="mgb20" style="height:252px;">
                     <div class="user-info">
-                        <img src="../../assets/img/img.jpg" class="user-avator" alt="">
+                        <img src="@/assets/img/img.jpg" class="user-avator" alt="">
                         <div class="user-info-cont">
-                            <div class="user-info-name">{{name}}</div>
+                            <div class="user-info-name">{{userInfo.nickname || '***'}}</div>
                             <div>{{role}}</div>
                         </div>
                     </div>
@@ -106,12 +106,11 @@
 
 <script>
     import Schart from 'vue-schart';
-    import bus from '../common/bus';
+    import bus from '@/components/common/bus';
     export default {
         name: 'dashboard',
         data() {
             return {
-                name: JSON.parse(localStorage.getItem('userMessage')).nickname,
                 todoList: [{
                         title: '今天要修复100个bug',
                         status: false,
@@ -189,7 +188,10 @@
         computed: {
             role() {
                 return this.name === 'admin' ? '超级管理员' : '普通用户';
-            }
+            },
+			userInfo(){
+			    return this.$store.getters.userInfo || '';
+			}
         },
         created(){
             this.handleListener();

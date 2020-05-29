@@ -23,11 +23,11 @@
                     <span class="btn-bell-badge" v-if="message"></span>
                 </div> -->
                 <!-- 用户头像 -->
-                <div class="user-avator"><img src="../../assets/img/img.jpg"></div>
+                <div class="user-avator"><img src="@/assets/img/img.jpg"></div>
                 <!-- 用户名下拉菜单 -->
                 <el-dropdown class="user-name" trigger="click" @command="handleCommand">
                     <span class="el-dropdown-link">
-                        {{username}} <i class="el-icon-caret-bottom"></i>
+                        {{userInfo.nickname || '***'}} <i class="el-icon-caret-bottom"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
                         <el-dropdown-item divided  command="usermessage">用户信息</el-dropdown-item>
@@ -45,7 +45,7 @@
     </div>
 </template>
 <script>
-    import bus from '../common/bus';
+    import bus from '@/components/common/bus';
     export default {
         data() {
             return {
@@ -56,17 +56,16 @@
             }
         },
         computed:{
-            username(){
-                let username = JSON.parse(localStorage.getItem('userMessage')).nickname;
-                return username ? username : this.name;
+            userInfo(){
+                return this.$store.getters.userInfo || '';
             }
         },
         methods:{
             // 用户名下拉菜单选择事件
             handleCommand(command) {
                 if(command == 'loginout'){
-                    localStorage.removeItem('userMessage')
-                    this.$router.push('/login');
+                    localStorage.clear();
+                    location.reload();
                 }else if(command === 'usermessage') {
                     
                 }

@@ -47,6 +47,7 @@ module.exports = class BaseComponent {
 	insertLoginLog(data, req) {
 		let param = {
 		    userName: data.nickname,
+			createrId: data._id,
 		    landTime: _this.localDate(),
 		    landIp: _this.getClientIP(req),
 		    permissions: data.status

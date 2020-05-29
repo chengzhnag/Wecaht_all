@@ -30,6 +30,10 @@ const customerSchema = new mongoose.Schema({
 		type: String,
 		required: true
 	},
+	'createrId': {
+		type: String,
+		required: true
+	},
 	'dealers': String,
 	'createTime': {
 		type: Date,

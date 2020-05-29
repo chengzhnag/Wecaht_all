@@ -1,10 +1,8 @@
 import Vue from 'vue'
 import App from './App.vue'
 import router from './router'
-import axios from 'axios';
-import {
-    commonapi
-} from './components/common/commonapi.js'
+import store from './store'
+
 import {storageservice} from './components/common/storageservice.js'
 
 import ElementUI from 'element-ui';
@@ -18,13 +16,11 @@ Vue.config.productionTip = false
 Vue.use(ElementUI, {
     size: 'small'
 });
-Vue.prototype.$axios = axios;
-Vue.prototype.$commonapi = commonapi;
 Vue.prototype.$storage = storageservice;
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {
-    const role = localStorage.getItem('userMessage') ? JSON.parse(localStorage.getItem('userMessage')).status : '';
+    const role = store.getters.userInfo ? store.getters.userInfo.status : '';
     if (!role && to.path !== '/login') {
         next('/login');
     } else if (to.meta.permission) {
@@ -45,5 +41,6 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
     router,
+	store,
     render: h => h(App)
 }).$mount('#app')
