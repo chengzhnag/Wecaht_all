@@ -3,7 +3,8 @@ import App from './App.vue'
 import router from './router'
 import store from './store'
 
-import {storageservice} from './components/common/storageservice.js'
+import {storageservice} from './components/common/storageservice.js';
+import utils from './components/common/util.js';
 
 import ElementUI from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css'; // 默认主题
@@ -17,6 +18,20 @@ Vue.use(ElementUI, {
     size: 'small'
 });
 Vue.prototype.$storage = storageservice;
+Vue.prototype.$utils = utils;
+
+Vue.filter("filterImg", function(url) {
+  let flag = /(http|https)/.test(url);
+  let host = process.env.VUE_APP_BASE_API;
+  if (!flag && url) {
+    if (!/data:image\/([^;]+).*/.test(url)) {
+      if (url.indexOf('public') == 0) {
+		  url = host + url.replace('public', '');
+	  }
+    }
+  }
+  return url;
+});
 
 //使用钩子函数对路由进行权限跳转
 router.beforeEach((to, from, next) => {

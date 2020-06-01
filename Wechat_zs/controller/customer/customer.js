@@ -14,6 +14,7 @@ class Customers extends BaseComponent {
 		super()
 	}
 	async addCustomer(req, res, next) {
+		// express-validator中间件验证参数
 		const errors = validationResult(req);
 		console.log(errors);
 		if (!errors.isEmpty()) {
@@ -21,23 +22,36 @@ class Customers extends BaseComponent {
 				errors: errors.array()
 			});
 		}
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		var body = req.body;
 		try {
+			// 通过_id查找当前操作的用户数据
+			const u_data = await User.findOne({
+				'_id': _id
+			});
+			if (!u_data) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			// 通过请求传入的手机号查询是否存在该业主
 			const info = await Customer.findOne({
 				customerMobil: body.customerMobil
 			}, '-_id -__v -password');
-			if (!info) {
+			if (!info) { // 不存在则添加业主
 				const newCus = new Customer(body);
 				await newCus.save();
+				// 插入一条操作日志
+				super.insertOperationLog(u_data, body, 'add', req);
 				res.send({
 					Code: 1,
 					Message: '添加成功'
 				})
 			} else {
-				return super.returnErrMessage(res, '当前用户已存在, 请不要重复添加');
+				return super.returnErrMessage(res, '当前业主已存在, 请不要重复添加');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '添加用户失败', err);
+			return super.returnErrMessage(res, '添加业主失败', err);
 		}
 	}
 	upload(req, res, next) {
@@ -52,17 +66,30 @@ class Customers extends BaseComponent {
 		})
 	}
 	async getOwnerList(req, res, next) {
+		// 查询条件变成正则
 		var findval = new RegExp(req.query.keyword); //查询的时候判断条件加 new RegExp( )即可变成关键字搜索
 		const {
 			pageNum = 1, pageSize = 10
 		} = req.query;
+		// 获取header的id
 		var _id = req.headers.zsid;
 		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		try {
+			// 通过_id查找当前操作的用户数据
 			const info = await User.findOne({
 				'_id': _id
 			});
-			const count = await Customer.estimatedDocumentCount();
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			// 获取数据库所有业主的长度
+			var count = await Customer.estimatedDocumentCount();
+			if (info.status == 2) { // 如果不是管理员
+				// 获取createrId等于_id的长度
+				count = await Customer.countDocuments({
+					createrId: _id
+				});
+			}
 			let params = {
 				$or: [{
 					customerName: findval
@@ -78,6 +105,7 @@ class Customers extends BaseComponent {
 					dealers: findval
 				}]
 			};
+			// 如果是管理员查找所有的业主, 否则查找自己创建的业主
 			info.status == 1 ? '' : params.createrId = _id;
 			const data = await Customer.find(params)
 				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
@@ -101,17 +129,35 @@ class Customers extends BaseComponent {
 	}
 
 	async deleteOwner(req, res, next) {
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		var body = req.body;
 		try {
+			// 通过_id查找当前操作的用户数据
+			const u_data = await User.findOne({
+				'_id': _id
+			});
+			if (!u_data) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			// 通过传入的id查找数据库是否存在要删除的业主
 			const info = await Customer.findOne({
 				_id: body._id
 			})
 			if (!info) {
 				return super.returnErrMessage(res, '查询不到该业主, 无法删除');
 			}
+			// 如果当前操作的用户不是管理员 && info['createrId'] 不是当前操作用户的id
+			// 管理员可以删除任何人, 非管理员只能删除自己添加的业主
+			if (u_data['status'] == 2 && info['createrId'] != u_data['_id']) {
+				return super.returnErrMessage(res, '无法删除他人添加的业主, 删除失败');
+			}
 			await Customer.remove({
 				_id: body._id
 			});
+			// 插入一条操作日志
+			super.insertOperationLog(u_data, info, 'delete', req);
 			res.send({
 				Code: 1,
 				Message: '删除成功'
@@ -121,6 +167,7 @@ class Customers extends BaseComponent {
 		}
 	}
 	async updateOwner(req, res, next) {
+		// express-validator中间件验证参数
 		const errors = validationResult(req);
 		console.log(errors);
 		if (!errors.isEmpty()) {
@@ -128,21 +175,30 @@ class Customers extends BaseComponent {
 				errors: errors.array()
 			});
 		}
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		var body = req.body;
 		try {
-			const info = await Customer.findOne({
-				_id: body._id
-			})
-			if (!info) {
-				return super.returnErrMessage(res, '查询不到该业主, 无法更新数据');
+			// 通过_id查找当前操作的用户数据
+			const u_data = await User.findOne({
+				'_id': _id
+			});
+			if (!u_data) {
+				return super.returnErrMessage(res, '无法查找到该用户');
 			}
-			Object.assign(info, body);
-			await Customer.save(info);
+			// 通过id更新整条记录
+			await Customer.update({
+				_id: body._id
+			}, body);
+			// 插入一条操作日志
+			super.insertOperationLog(u_data, body, 'update', req);
 			res.send({
 				Code: 1,
 				Message: '更新成功'
 			})
 		} catch (err) {
+			console.log(err);
 			return super.returnErrMessage(res, '更新业主数据失败', err);
 		}
 	}

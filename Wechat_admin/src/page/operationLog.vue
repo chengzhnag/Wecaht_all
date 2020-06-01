@@ -11,11 +11,11 @@
 		<div class="container">
 			<el-table :data="tableData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
 				<el-table-column align="center" prop="count" label="序号" width="50"></el-table-column>
-				<el-table-column align="center" prop="userName" label="用户" width="150"></el-table-column>
-				<el-table-column align="center" prop="landTime" label="登陆时间" width="180"></el-table-column>
-				<el-table-column align="center" prop="landIp" label="登陆IP" width="180"></el-table-column>
+				<el-table-column align="center" prop="userName" label="用户" width="220"></el-table-column>
+				<el-table-column align="center" prop="landTime" label="登陆时间" width="220"></el-table-column>
+				<el-table-column align="center" prop="landIp" label="登陆IP" width="220"></el-table-column>
 				<el-table-column align="center" prop="operationText" label="操作"></el-table-column>
-				<el-table-column align="center" prop="permissions" label="权限" width="90"></el-table-column>
+				<el-table-column align="center" prop="permissions" label="权限" width="220"></el-table-column>
 			</el-table>
 			<div class="pagination"><el-pagination background @current-change="handleCurrentChange" layout="prev, pager, next" :total="totalCount"></el-pagination></div>
 		</div>
@@ -58,6 +58,7 @@ export default {
 						let _data = res.Data;
 						for (let i = 0; i < _data.length; i++) {
 							_data[i].count = (this.cur_page - 1) * 10 + i + 1;
+							_data[i].landTime = this.$utils.parseTime(_data[i].landTime);
 							_data[i].permissions = _data[i].permissions === 1 ? ' 管理员' : '普通用户';
 						}
 						this.tableData = _data;

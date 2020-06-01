@@ -1,4 +1,6 @@
 const LoginLog = require('../models/loginLog/loginLog.js');
+const OperationLog = require('../models/operationLog/operationLog.js');
+const dtime = require('time-formater');
 
 var _this;
 module.exports = class BaseComponent {
@@ -29,10 +31,8 @@ module.exports = class BaseComponent {
 		}
 	}
 
-	localDate(v) {
-		const d = new Date(v || Date.now());
-		d.setMinutes(d.getMinutes() - d.getTimezoneOffset());
-		return d.toISOString();
+	localDate() {
+		return dtime().format('YYYY-MM-DD HH:mm');
 	}
 
 	returnErrMessage(res, msg, err) {
@@ -46,13 +46,39 @@ module.exports = class BaseComponent {
 	// 插入登录日志
 	insertLoginLog(data, req) {
 		let param = {
-		    userName: data.nickname,
+			userName: data.nickname,
 			createrId: data._id,
-		    landTime: _this.localDate(),
-		    landIp: _this.getClientIP(req),
-		    permissions: data.status
+			landTime: _this.localDate(),
+			landIp: _this.getClientIP(req),
+			permissions: data.status
 		}
 		var log = new LoginLog(param);
+		log.save(function(err, res) {
+			if (err) {
+				console.log("Error:" + err);
+			} else {
+				console.log("Res:" + res);
+			}
+		});
+	}
+
+	// 插入操作日志记录
+	insertOperationLog(u_data, info, type, req) {
+		let conf = {
+			'update': '更新了一个用户',
+			'add': '添加了一个用户',
+			'delete': '删除了一个用户',
+		}
+		let param = {
+			userName: u_data.nickname,
+			createrId: u_data._id,
+			landTime: _this.localDate(),
+			landIp: _this.getClientIP(req),
+			operationText: u_data.nickname + conf[type] + info.customerName,
+			permissions: u_data.status
+		}
+		
+		var log = new OperationLog(param);
 		log.save(function(err, res) {
 			if (err) {
 				console.log("Error:" + err);

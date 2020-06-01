@@ -40,6 +40,7 @@ router.post('/updateOwner', [
 	check('qualityAssuranceNum').notEmpty(),
 	check('hydraulicIntegral').notEmpty(),
 	check('createrId').notEmpty(),
+	check('_id').notEmpty(),
 	check('uploadPhotos').isArray()
 ], Customers.updateOwner);
 

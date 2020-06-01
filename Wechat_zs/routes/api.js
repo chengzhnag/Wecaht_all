@@ -19,4 +19,8 @@ router.post('/register', Users.saveUser);
 
 router.post('/updateUser', Users.upDateUser);
 
+router.get('/getUserList', Users.getUserList);
+
+router.post('/setAdmin', Users.setAdmin);
+
 module.exports = router;

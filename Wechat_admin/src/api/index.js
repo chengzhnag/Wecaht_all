@@ -57,3 +57,19 @@ export const getOperationLog = query => {
 		params: query
 	});
 };
+
+export const getUserList = query => {
+	return request({
+		url: '/api/getUserList',
+		method: 'get',
+		params: query
+	});
+};
+
+export const setAdmin = data => {
+	return request({
+		url: '/api/setAdmin',
+		method: 'post',
+		data
+	});
+};

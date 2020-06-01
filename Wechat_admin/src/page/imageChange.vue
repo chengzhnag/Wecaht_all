@@ -15,15 +15,15 @@
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
 				<el-table-column prop="count" label="序号" width="50"></el-table-column>
-				<el-table-column align="center" prop="createTime" label="日期" sortable width="140"></el-table-column>
-				<el-table-column align="center" prop="qualityAssuranceNum" label="质保号" width="120"></el-table-column>
-				<el-table-column align="center" prop="dealers" label="经销商" width="70"></el-table-column>
-				<el-table-column align="center" prop="customerName" label="用户姓名" width="80"></el-table-column>
-				<el-table-column align="center" prop="customerAdress" label="用户地址"></el-table-column>
-				<el-table-column align="center" prop="hydraulicName" label="水工姓名" width="80"></el-table-column>
-				<el-table-column align="center" prop="hydraulicMobil" label="水工电话" width="110"></el-table-column>
-				<el-table-column align="center" prop="hydraulicIntegral" label="积分" width="50"></el-table-column>
-				<el-table-column align="center" prop="operatingAccount" label="操作员" width="70"></el-table-column>
+				<el-table-column align="center" prop="createTime" label="日期" sortable width="180"></el-table-column>
+				<el-table-column align="center" prop="qualityAssuranceNum" label="质保号" width="130"></el-table-column>
+				<el-table-column align="center" prop="dealers" label="经销商" width="90"></el-table-column>
+				<el-table-column align="center" prop="customerName" label="业主姓名" width="90"></el-table-column>
+				<el-table-column align="center" prop="customerAdress" label="业主地址"></el-table-column>
+				<el-table-column align="center" prop="hydraulicName" label="水工姓名" width="90"></el-table-column>
+				<el-table-column align="center" prop="hydraulicMobil" label="水工电话" width="120"></el-table-column>
+				<el-table-column align="center" prop="hydraulicIntegral" label="积分" width="110"></el-table-column>
+				<el-table-column align="center" prop="operatingAccount" label="操作员" width="100"></el-table-column>
 				<el-table-column label="操作" width="180" align="center">
 					<template slot-scope="scope">
 						<el-button type="text" icon="el-icon-edit" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
@@ -85,7 +85,7 @@ export default {
 						let _data = res.Data;
 						for (let i = 0; i < _data.length; i++) {
 							_data[i].count = (this.cur_page - 1) * 10 + i + 1;
-							_data[i].createTime = this.filterTime(_data[i].createTime);
+							_data[i].createTime = this.$utils.parseTime(_data[i].createTime);
 						}
 						this.tableData = _data;
 						this.totalCount = res.TotalCount;
@@ -107,8 +107,8 @@ export default {
 		},
 		handleEdit(index, row) {
 			this.idx = index;
+			this.$store.commit('index/SET_EDITORDATA', row);
 			this.$router.push('/addmessage');
-			localStorage.setItem('needEditUser', JSON.stringify(row));
 		},
 		handleDelete(index, row) {
 			this.idx = index;
@@ -127,7 +127,7 @@ export default {
 					if (res.Code === 1) {
 						this.$message.success('删除成功');
 						this.delVisible = false;
-						this.tableData.splice(this.idx, 1);
+						this.getData();
 					} else {
 						this.$message.error(res.Message || '删除失败');
 						this.delVisible = false;
@@ -136,9 +136,6 @@ export default {
 				.catch(err => {
 					this.$message.error(err || '删除失败');
 				});
-		},
-		filterTime(time) {
-			return new Date(time).toLocaleString();
 		}
 	}
 };

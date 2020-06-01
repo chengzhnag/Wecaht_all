@@ -6,18 +6,18 @@
 					<i class="el-icon-lx-calendar"></i>
 					{{ isEdit ? '修改信息' : '添加信息' }}
 				</el-breadcrumb-item>
-				<el-breadcrumb-item>{{ isEdit ? '修改用户' : '添加用户' }}</el-breadcrumb-item>
+				<el-breadcrumb-item>{{ isEdit ? '修改业主' : '添加业主' }}</el-breadcrumb-item>
 			</el-breadcrumb>
 		</div>
 		<div class="container">
 			<div class="form-box" style="width: 100%;">
 				<el-form ref="form" :rules="rules" label-position="right" :model="form" label-width="80px">
 					<div class="one_row">
-						<el-form-item label="用户姓名" prop="userName"><el-input v-model="form.userName" clearable></el-input></el-form-item>
-						<el-form-item class="row_right" label="用户电话" prop="userPhoen"><el-input v-model="form.userPhoen" clearable></el-input></el-form-item>
+						<el-form-item label="业主姓名" prop="userName"><el-input v-model="form.userName" clearable></el-input></el-form-item>
+						<el-form-item class="row_right" label="业主电话" prop="userPhoen"><el-input v-model="form.userPhoen" clearable></el-input></el-form-item>
 					</div>
 					<div class="one_row">
-						<el-form-item label="用户地址" prop="userAddress"><el-input v-model="form.userAddress" clearable></el-input></el-form-item>
+						<el-form-item label="业主地址" prop="userAddress"><el-input v-model="form.userAddress" clearable></el-input></el-form-item>
 						<el-form-item class="row_right" label="水工姓名" prop="hydraulicName"><el-input v-model="form.hydraulicName" clearable></el-input></el-form-item>
 					</div>
 					<div class="one_row">
@@ -37,7 +37,7 @@
 					<el-row :gutter="20" class="el_row_box">
 						<el-col :span="8" v-for="(item, index) in needEditUser.uploadPhotos" :key="index">
 							<div class="grid-content bg-purple">
-								<img :src="imgHttp + '' + item.path" alt="" />
+								<img :src="item.path | filterImg" alt="" />
 								<i class="el-icon-delete" @click="deleteImg(index)"></i>
 								<span class="count">{{ item.count }}</span>
 							</div>
@@ -78,26 +78,27 @@
 	</div>
 </template>
 <script>
-import { addCustomer, uploadUrl } from '@/api';
+import { addCustomer, uploadUrl, updateOwner } from '@/api';
 export default {
 	name: 'addmessage',
 	data: function() {
 		return {
 			form: {
-				userName: '', // 用户姓名
-				userPhoen: '', // 用户电话
-				userAddress: '', // 用户地址
+				userName: '', // 业主姓名
+				userPhoen: '', // 业主电话
+				userAddress: '', // 业主地址
 				hydraulicName: '', // 水工姓名
 				hydraulicPhoen: '', // 水工电话
 				qualityAssuranceNum: '', // 质保卡号
 				hydraulicIntegral: '', // 水工积分
 				dealers: '', // 经销商
 				uploadTime: new Date().toLocaleString(), // 上传时间
-				operatingAccount: '' // 操作账号
+				operatingAccount: '', // 操作账号
+				createrId: ''
 			},
 			rules: {
-				userName: [{ required: true, message: '请输入用户姓名', trigger: 'blur' }, { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }],
-				userPhoen: [{ required: true, message: '请输入用户电话', trigger: 'blur' }, { min: 11, max: 11, message: '长度需11个字符', trigger: 'blur' }],
+				userName: [{ required: true, message: '请输入业主姓名', trigger: 'blur' }, { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }],
+				userPhoen: [{ required: true, message: '请输入业主电话', trigger: 'blur' }, { min: 11, max: 11, message: '长度需11个字符', trigger: 'blur' }],
 				hydraulicName: [{ required: true, message: '请输入水工姓名', trigger: 'blur' }, { min: 2, max: 5, message: '长度在 2 到 5 个字符', trigger: 'blur' }],
 				hydraulicPhoen: [{ required: true, message: '请输入水工电话', trigger: 'blur' }, { min: 11, max: 11, message: '长度需11个字符', trigger: 'blur' }],
 				userAddress: [{ required: true, message: '请输入地址', trigger: 'blur' }],
@@ -107,29 +108,45 @@ export default {
 			uploadUrl: uploadUrl,
 			fileList: [],
 			needEditUser: {},
-			isEdit: false,
-			imgHttp: process.env.VUE_APP_BASE_API
+			isEdit: false
 		};
 	},
 	mounted() {},
 	computed: {
 		userInfo() {
 			return this.$store.getters.userInfo || '';
+		},
+		editorData() {
+			return this.$store.getters.editorData;
 		}
 	},
 	activated() {
-		this.isEdit = false;
-		let needEditUser = localStorage.getItem('needEditUser');
-		if (needEditUser && !this.isEdit) {
-			this.needEditUser = JSON.parse(needEditUser);
+		this.reset();
+		if (this.editorData && !this.isEdit) {
+			this.needEditUser = this.editorData;
 			this.isEdit = true;
-			console.log(this.needEditUser);
 			this.init(this.needEditUser);
-		}else {
-			this.form.operatingAccount = this.userInfo.nickname;
 		}
 	},
 	methods: {
+		reset() {
+			this.form = {
+				userName: '', // 业主姓名
+				userPhoen: '', // 业主电话
+				userAddress: '', // 业主地址
+				hydraulicName: '', // 水工姓名
+				hydraulicPhoen: '', // 水工电话
+				qualityAssuranceNum: '', // 质保卡号
+				hydraulicIntegral: '', // 水工积分
+				dealers: '', // 经销商
+				uploadTime: new Date().toLocaleString(), // 上传时间
+				operatingAccount: this.userInfo.nickname, // 操作账号
+				createrId: this.userInfo._id || ''
+			};
+			this.fileList = [];
+			this.needEditUser = {};
+			this.isEdit = false;
+		},
 		submitForm(formName) {
 			this.$refs[formName].validate(valid => {
 				if (valid) {
@@ -144,28 +161,40 @@ export default {
 						dealers: this.form.dealers,
 						operatingAccount: this.form.operatingAccount,
 						uploadPhotos: this.fileListReduce(),
-						createrId: this.userInfo._id || ''
+						createrId: this.form.createrId
 					};
-					addCustomer(param).then(res=> {
-						if (res.Code === 1) {
-							this.$router.push('/');
-							this.$refs[formName].resetFields();
-							this.fileList = [];
-							this.$message.success('添加成功');
-							if (this.isEdit) {
-								this.needEditUser = {};
-							}
-						} else {
-							this.$message.error(res.Message);
-						}
-					}).catch(err=> {
-						this.$message.error(err || 'addCustomer error');
-					})
-					/* let url = this.$commonapi.userregister;
 					if (this.isEdit) {
-						url = this.$commonapi.updateuser;
 						param._id = this.needEditUser._id;
-					} */
+						updateOwner(param)
+							.then(res => {
+								if (res.Code === 1) {
+									this.$router.push('/');
+									this.$refs[formName].resetFields();
+									this.fileList = [];
+									this.$message.success('修改用户数据成功');
+								} else {
+									this.$message.error(res.Message);
+								}
+							})
+							.catch(err => {
+								this.$message.error(err || 'updateOwner error');
+							});
+						return;
+					}
+					addCustomer(param)
+						.then(res => {
+							if (res.Code === 1) {
+								this.$router.push('/');
+								this.$refs[formName].resetFields();
+								this.fileList = [];
+								this.$message.success('添加成功');
+							} else {
+								this.$message.error(res.Message);
+							}
+						})
+						.catch(err => {
+							this.$message.error(err || 'addCustomer error');
+						});
 				} else {
 					console.log('error submit!!');
 					return false;
@@ -222,16 +251,17 @@ export default {
 		},
 		init(row) {
 			this.form = {
-				userName: row.customerName, // 用户姓名
-				userPhoen: row.customerMobil, // 用户电话
-				userAddress: row.customerAdress, // 用户地址
+				userName: row.customerName, // 业主姓名
+				userPhoen: row.customerMobil, // 业主电话
+				userAddress: row.customerAdress, // 业主地址
 				hydraulicName: row.hydraulicName, // 水工姓名
 				hydraulicPhoen: row.hydraulicMobil, // 水工电话
 				qualityAssuranceNum: row.qualityAssuranceNum, // 质保卡号
 				hydraulicIntegral: row.hydraulicIntegral, // 水工积分
 				dealers: row.dealers, // 经销商
 				uploadTime: row.createTime, // 上传时间
-				operatingAccount: row.operatingAccount
+				operatingAccount: row.operatingAccount,
+				createrId: row.createrId
 			};
 			let data = this.needEditUser.uploadPhotos;
 			for (let i = 0; i < data.length; i++) {
@@ -269,10 +299,12 @@ export default {
 		}
 	},
 	beforeDestroy() {
-		localStorage.removeItem('needEditUser');
+		console.log('beforeDestroy');
+		this.$store.commit('index/SET_EDITORDATA', null);
 	},
 	destroyed() {
-		localStorage.removeItem('needEditUser');
+		console.log('destroyed');
+		this.$store.commit('index/SET_EDITORDATA', null);
 	}
 };
 </script>

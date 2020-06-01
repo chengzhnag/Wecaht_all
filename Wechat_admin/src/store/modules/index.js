@@ -3,13 +3,17 @@ import {
 } from '@/components/common/storageservice.js';
 
 const state = {
-	userInfo: storageservice.read('userInfo') || null
+	userInfo: storageservice.read('userInfo') || null,
+	editorData: null
 }
 
 const mutations = {
 	SET_USERINFO: (state, userInfo) => {
 		state.userInfo = userInfo;
 		storageservice.write('userInfo', userInfo);
+	},
+	SET_EDITORDATA: (state, editorData) => {
+		state.editorData = editorData;
 	}
 }
 

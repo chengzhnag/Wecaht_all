@@ -79,6 +79,12 @@ export default new Router({
                     component: resolve => require(['@/page/DragDialog.vue'], resolve),
                     meta: { title: '拖拽弹框' }
                 },
+				{
+				    // 增加管理员
+				    path: '/addadmin',
+				    component: resolve => require(['@/page/addAdmin.vue'], resolve),
+				    meta: { title: '增加管理员' }
+				},
                 {
                     // 权限页面
                     path: '/permission',

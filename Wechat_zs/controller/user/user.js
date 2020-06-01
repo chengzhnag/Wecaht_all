@@ -4,10 +4,12 @@ const User = require('../../models/user/user.js');
 const BaseComponent = require('../../utils/baseComponent.js');
 var url = require('url');
 var utils = require('../../utils/wechatUtil.js');
+var _this;
 
 class Users extends BaseComponent {
 	constructor() {
 		super()
+		_this = this;
 	}
 	getToken(req, res, next) {
 		var params = url.parse(req.url, true).query;
@@ -115,6 +117,47 @@ class Users extends BaseComponent {
 			return super.returnErrMessage(res, '出错了', err);
 		}
 	}
+
+	async getUserList(req, res, next) {
+		// 查询条件变成正则
+		var findval = new RegExp(req.query.keyword); //查询的时候判断条件加 new RegExp( )即可变成关键字搜索
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': _id
+			});
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			if (info.status == 2) { // 如果不是管理员
+				return super.returnErrMessage(res, '没有权限调用该接口, 请联系管理员');
+			}
+			let params = {
+				$or: [{
+					nickname: findval
+				}, {
+					mobile: findval
+				}]
+			};
+			const data = await User.find(params);
+			if (data) {
+				res.send({
+					Code: 1,
+					Message: '获取用户列表数据成功',
+					TotalCount: count,
+					Data: data
+				})
+			} else {
+				return super.returnErrMessage(res, '获取用户列表数据失败');
+			}
+		} catch (err) {
+			return super.returnErrMessage(res, '获取用户数据列表失败', err);
+		}
+	}
+
 	async login(req, res, next) {
 		var body = req.body;
 		var reg = 11 && /^((1)[1-9]{1}[0-9]{1}\d{8})$/;
@@ -144,6 +187,52 @@ class Users extends BaseComponent {
 		} catch (err) {
 			console.log(err);
 			return super.returnErrMessage(res, '登录出错', err);
+		}
+	}
+
+	async setAdmin(req, res, next) {
+		var body = req.body;
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': _id
+			});
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			if (info.status == 2) { // 如果不是管理员
+				return super.returnErrMessage(res, '没有权限调用该接口, 请联系管理员');
+			}
+			var ids = body.ids.split(',');
+			for (let i = 0; i < ids.length; i++) {
+				await _this.funcSetAdmin(ids[i]);
+			}
+			res.send({
+				Code: 1,
+				Message: '设置管理员成功'
+			})
+		} catch (err) {
+			return super.returnErrMessage(res, '设置管理员出错了', err);
+		}
+	}
+
+	async funcSetAdmin(id) {
+		try {
+			const query = {
+				_id: id
+			};
+			const options = {
+				upsert: true,
+				new: true
+			};
+			await User.findOneAndUpdate(query, {
+					status: 1
+				},
+				options)
+		} catch (e) {
+			console.log(e);
 		}
 	}
 }
