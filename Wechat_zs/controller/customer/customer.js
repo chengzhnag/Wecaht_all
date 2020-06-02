@@ -51,7 +51,7 @@ class Customers extends BaseComponent {
 				return super.returnErrMessage(res, '当前业主已存在, 请不要重复添加');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '添加业主失败', err);
+			return super.returnErrMessage(res, '添加业主失败', err.message);
 		}
 	}
 	upload(req, res, next) {
@@ -124,7 +124,7 @@ class Customers extends BaseComponent {
 				return super.returnErrMessage(res, '获取业主数据失败');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '获取业主数据失败', err);
+			return super.returnErrMessage(res, '获取业主数据失败', err.message);
 		}
 	}
 
@@ -163,7 +163,7 @@ class Customers extends BaseComponent {
 				Message: '删除成功'
 			})
 		} catch (err) {
-			return super.returnErrMessage(res, '删除业主失败', err);
+			return super.returnErrMessage(res, '删除业主失败', err.message);
 		}
 	}
 	async updateOwner(req, res, next) {
@@ -199,7 +199,7 @@ class Customers extends BaseComponent {
 			})
 		} catch (err) {
 			console.log(err);
-			return super.returnErrMessage(res, '更新业主数据失败', err);
+			return super.returnErrMessage(res, '更新业主数据失败', err.message);
 		}
 	}
 }

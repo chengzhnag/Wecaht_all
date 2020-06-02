@@ -53,7 +53,7 @@ class LoginLogs extends BaseComponent {
 				return super.returnErrMessage(res, '暂无登录日志数据');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '获取登录日志失败', err);
+			return super.returnErrMessage(res, '获取登录日志失败', err.message);
 		}
 	}
 }

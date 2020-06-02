@@ -46,7 +46,7 @@ class Users extends BaseComponent {
 			}
 		} catch (err) {
 			console.log(err);
-			return super.returnErrMessage(res, '获取用户信息失败', err);
+			return super.returnErrMessage(res, '获取用户信息失败', err.message);
 		}
 	}
 	async saveUser(req, res, next) {
@@ -84,7 +84,7 @@ class Users extends BaseComponent {
 			}
 		} catch (err) {
 			console.log(err);
-			return super.returnErrMessage(res, '注册失败', err);
+			return super.returnErrMessage(res, '注册失败', err.message);
 		}
 	}
 	upDateUser(req, res, next) {
@@ -114,7 +114,7 @@ class Users extends BaseComponent {
 					}
 				});
 		} catch (err) {
-			return super.returnErrMessage(res, '出错了', err);
+			return super.returnErrMessage(res, '出错了', err.message);
 		}
 	}
 
@@ -147,14 +147,13 @@ class Users extends BaseComponent {
 				res.send({
 					Code: 1,
 					Message: '获取用户列表数据成功',
-					TotalCount: count,
 					Data: data
 				})
 			} else {
 				return super.returnErrMessage(res, '获取用户列表数据失败');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '获取用户数据列表失败', err);
+			return super.returnErrMessage(res, '获取用户数据列表失败', err.message);
 		}
 	}
 
@@ -186,7 +185,7 @@ class Users extends BaseComponent {
 			}
 		} catch (err) {
 			console.log(err);
-			return super.returnErrMessage(res, '登录出错', err);
+			return super.returnErrMessage(res, '登录出错', err.message);
 		}
 	}
 
@@ -214,7 +213,7 @@ class Users extends BaseComponent {
 				Message: '设置管理员成功'
 			})
 		} catch (err) {
-			return super.returnErrMessage(res, '设置管理员出错了', err);
+			return super.returnErrMessage(res, '设置管理员出错了', err.message);
 		}
 	}
 
@@ -232,7 +231,7 @@ class Users extends BaseComponent {
 				},
 				options)
 		} catch (e) {
-			console.log(e);
+			console.log(e.message);
 		}
 	}
 }
