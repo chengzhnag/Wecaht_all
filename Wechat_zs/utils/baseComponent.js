@@ -65,16 +65,17 @@ module.exports = class BaseComponent {
 	// 插入操作日志记录
 	insertOperationLog(u_data, info, type, req) {
 		let conf = {
-			'update': '更新了一个用户',
-			'add': '添加了一个用户',
-			'delete': '删除了一个用户',
+			'update': '更新了一个业主',
+			'add': '添加了一个业主',
+			'delete': '删除了一个业主',
+			'setadmin': '设置了一个管理员'
 		}
 		let param = {
 			userName: u_data.nickname,
 			createrId: u_data._id,
 			landTime: _this.localDate(),
 			landIp: _this.getClientIP(req),
-			operationText: u_data.nickname + conf[type] + info.customerName,
+			operationText: u_data.nickname + conf[type] + (info.customerName || info.nickname),
 			permissions: u_data.status
 		}
 		

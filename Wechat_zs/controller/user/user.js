@@ -206,7 +206,7 @@ class Users extends BaseComponent {
 			}
 			var ids = body.ids.split(',');
 			for (let i = 0; i < ids.length; i++) {
-				await _this.funcSetAdmin(ids[i]);
+				await _this.funcSetAdmin(ids[i], info, req);
 			}
 			res.send({
 				Code: 1,
@@ -217,19 +217,26 @@ class Users extends BaseComponent {
 		}
 	}
 
-	async funcSetAdmin(id) {
+	async funcSetAdmin(id, u_data, req) {
 		try {
-			const query = {
-				_id: id
-			};
-			const options = {
-				upsert: true,
-				new: true
-			};
-			await User.findOneAndUpdate(query, {
-					status: 1
-				},
-				options)
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': id
+			});
+			if (info) {
+				const query = {
+					_id: id
+				};
+				const options = {
+					upsert: true,
+					new: true
+				};
+				await User.findOneAndUpdate(query, {
+						status: 1
+					},
+					options)
+					super.insertOperationLog(u_data, info, 'setadmin', req);
+			}
 		} catch (e) {
 			console.log(e.message);
 		}
