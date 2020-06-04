@@ -78,7 +78,7 @@ module.exports = class BaseComponent {
 			operationText: u_data.nickname + conf[type] + (info.customerName || info.nickname),
 			permissions: u_data.status
 		}
-		
+
 		var log = new OperationLog(param);
 		log.save(function(err, res) {
 			if (err) {

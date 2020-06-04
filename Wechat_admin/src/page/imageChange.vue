@@ -98,9 +98,8 @@ export default {
 				});
 		},
 		search() {
-			if (this.select_word.replace(/\s/g, '') != '') {
-				this.getData();
-			}
+			this.select_word = this.select_word.replace(/\s/g, '');
+			this.getData();
 		},
 		filterTag(value, row) {
 			return row.tag === value;

@@ -10,7 +10,7 @@
 		</div>
 		<div class="container">
 			<div class="handle-box">
-				<el-input v-model="select_word" placeholder="输入水工的用户号码" class="handle-input mr10" clearable></el-input>
+				<el-input v-model="select_word" placeholder="输入查询内容: (水工电话/业主电话/经销商/地址等）" class="handle-input mr10" clearable></el-input>
 				<el-button type="primary" icon="search" @click="search">搜索</el-button>
 			</div>
 			<el-table :data="tableData" border class="table" ref="multipleTable" @selection-change="handleSelectionChange">
@@ -42,7 +42,7 @@
 			</span>
 		</el-dialog>
 		<el-dialog title="查看用户信息" :visible.sync="dialogFormVisible" center custom-class="dialog_box" width="70%">
-			<div class="form-box data_query_box" style="width: 760px;">
+			<div class="form-box data_query_box" style="width: 76%">
 				<el-form ref="form" label-position="right" :model="form" label-width="80px">
 					<div class="one_row">
 						<el-form-item label="业主姓名" prop="userName"><el-input v-model="form.userName" disabled></el-input></el-form-item>
@@ -65,9 +65,9 @@
 						<el-form-item label="操作账号"><el-input v-model="form.operatingAccount" disabled></el-input></el-form-item>
 					</div>
 				</el-form>
-				<el-carousel :interval="4000" type="card" height="200px" v-if="tableData.length">
-					<el-carousel-item v-for="(item, index) in tableData[idx]['uploadPhotos']" :key="index">
-						<img class="carousel_img" :src="item.path | filterImg" @click="openImg(item.path)" />
+				<el-carousel height="380px" indicator-position="outside">
+					<el-carousel-item v-for="(item, index) in showPhotos" :key="index">
+						<el-image :z-index="10001" class="carousel_img" fit="cover" :src="item.path" :preview-src-list="splitPhotos(showPhotos)"></el-image>
 					</el-carousel-item>
 				</el-carousel>
 			</div>
@@ -102,7 +102,7 @@ export default {
 				operatingAccount: ''
 			},
 			dialogFormVisible: false,
-			hostUrl: process.env.VUE_APP_BASE_API
+			showPhotos: []
 		};
 	},
 	created() {
@@ -144,12 +144,12 @@ export default {
 				});
 		},
 		search() {
-			if (this.select_word.replace(/\s/g, '') != '') {
-				this.getData();
-			}
+			this.select_word = this.select_word.replace(/\s/g, '');
+			this.getData();
 		},
 		handleEdit(index, row) {
 			this.idx = index;
+			this.showPhotos = this.tableData[index]['uploadPhotos'] || [];
 			this.form = {
 				userName: row.customerName, // 业主姓名
 				userPhoen: row.customerMobil, // 业主电话
@@ -192,11 +192,16 @@ export default {
 				});
 		},
 		openImg(path) {
-			let url = this.hostUrl + path;
-			if (path.indexOf('public') == 0) {
-				url = this.hostUrl + path.replace('public', '');
+			window.open(path);
+		},
+		splitPhotos(data) {
+			let result = [];
+			if (data && typeof data == 'object') {
+				data.forEach(item => {
+					result.push(item.path);
+				});
 			}
-			window.open(url);
+			return result;
 		}
 	}
 };
@@ -246,6 +251,5 @@ export default {
 .carousel_img {
 	width: 100%;
 	height: 100%;
-	object-fit: cover;
 }
 </style>

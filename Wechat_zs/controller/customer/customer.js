@@ -58,7 +58,7 @@ class Customers extends BaseComponent {
 		if (!req.file) {
 			return super.returnErrMessage(res, '上传文件失败');
 		}
-		// req.file.path = req.file.path.replace(/^public/g, _config.uploadUrl);
+		req.file.path = _config.uploadUrl + _config.uploadDir + req.file.filename;
 		res.send({
 			Code: 1,
 			Message: '上传成功',

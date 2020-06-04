@@ -37,7 +37,8 @@
 					<el-row :gutter="20" class="el_row_box">
 						<el-col :span="8" v-for="(item, index) in needEditUser.uploadPhotos" :key="index">
 							<div class="grid-content bg-purple">
-								<img :src="item.path | filterImg" alt="" />
+								<!-- <img :src="item.path | filterImg" alt="" /> -->
+								<el-image class="el-img" lazy fit="cover" :src="item.path" :preview-src-list="splitPhotos(needEditUser.uploadPhotos)"></el-image>
 								<i class="el-icon-delete" @click="deleteImg(index)"></i>
 								<span class="count">{{ item.count }}</span>
 							</div>
@@ -111,7 +112,10 @@ export default {
 			isEdit: false
 		};
 	},
-	mounted() {},
+	mounted() {
+		this.form.operatingAccount = this.userInfo.nickname;
+		this.form.createrId = this.userInfo._id;
+	},
 	computed: {
 		userInfo() {
 			return this.$store.getters.userInfo || '';
@@ -296,6 +300,15 @@ export default {
 				this.needEditUser.uploadPhotos.shift();
 				this.needEditUser.uploadPhotos.push(alone);
 			}
+		},
+		splitPhotos(data) {
+			let result = [];
+			if (data && typeof data == 'object') {
+				data.forEach(item => {
+					result.push(item.path);
+				});
+			}
+			return result;
 		}
 	},
 	beforeDestroy() {
@@ -380,6 +393,11 @@ export default {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
+}
+
+.grid-content .el-img {
+	width: 100%;
+	height: 100%;
 }
 
 .row-bg {
