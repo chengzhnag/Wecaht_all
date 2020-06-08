@@ -87,34 +87,77 @@ class Users extends BaseComponent {
 			return super.returnErrMessage(res, '注册失败', err.message);
 		}
 	}
-	upDateUser(req, res, next) {
+	async upDateUser(req, res, next) {
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		var body = req.body;
 		try {
-			const query = {
+			// 通过_id查找当前操作的用户数据
+			const u_data = await User.findOne({
+				'_id': _id
+			});
+			if (!u_data) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			if (u_data['status'] == 2 && _id != body._id) {
+				return super.returnErrMessage(res, '管理员才可以更新其他用户, 更新失败');
+			}
+			// 通过id更新整条记录
+			await User.update({
 				_id: body._id
-			};
-			delete body._id;
-			const options = {
-				upsert: true,
-				new: true
-			};
-			body.updateTime = super.localDate();
-			User.findOneAndUpdate(query,
-				body,
-				options,
-				(e, writeResult) => {
-					if (e) {
-						return super.returnErrMessage(res, 'findOneAndUpdate 出错了', e);
-					} else {
-						res.send({
-							Code: 1,
-							Message: '更新成功',
-							Data: super.deletePassword(writeResult)
-						})
-					}
-				});
+			}, body);
+			// 插入一条操作日志
+			super.insertOperationLog(u_data, body, 'updateuser', req);
+			res.send({
+				Code: 1,
+				Message: '更新成功'
+			})
 		} catch (err) {
-			return super.returnErrMessage(res, '出错了', err.message);
+			console.log(err);
+			return super.returnErrMessage(res, '更新用户数据失败', err.message);
+		}
+	}
+
+	async deleteUser(req, res, next) {
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		var body = req.body;
+		try {
+			// 通过_id查找当前操作的用户数据
+			const u_data = await User.findOne({
+				'_id': _id
+			});
+			if (!u_data) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			// 管理员可以删除任何人, 非管理员只能删除自己添加的业主
+			if (u_data['status'] == 2) {
+				return super.returnErrMessage(res, '管理员才可以删除用户, 删除失败');
+			}
+			let ids = body._id.split(',');
+			for (let i = 0; i < ids.length; i++) {
+				let id = ids[i];
+				// 通过传入的id查找数据库是否存在要删除的业主
+				const info = await User.findOne({
+					_id: id
+				})
+				if (!info) {
+					return super.returnErrMessage(res, `查询不到id为${id}的用户, 无法删除`);
+				}
+				await User.remove({
+					_id: id
+				});
+				// 插入一条操作日志
+				super.insertOperationLog(u_data, info, 'deleteuser', req);
+			}
+			res.send({
+				Code: 1,
+				Message: '删除成功'
+			})
+		} catch (err) {
+			return super.returnErrMessage(res, '删除用户失败', err.message);
 		}
 	}
 
@@ -232,8 +275,8 @@ class Users extends BaseComponent {
 					new: true
 				};
 				await User.findOneAndUpdate(query, {
-						status: 1
-					},
+					status: 1
+				},
 					options)
 				super.insertOperationLog(u_data, info, 'setadmin', req);
 			}

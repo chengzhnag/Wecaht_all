@@ -42,6 +42,14 @@ export const deleteOwner = data => {
 	});
 };
 
+export const deleteUser = data => {
+	return request({
+		url: '/api/deleteUser',
+		method: 'post',
+		data
+	});
+};
+
 export const updateOwner = data => {
 	return request({
 		url: '/admin/updateOwner',

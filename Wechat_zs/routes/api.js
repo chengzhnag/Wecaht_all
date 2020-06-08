@@ -19,6 +19,8 @@ router.post('/register', Users.saveUser);
 
 router.post('/updateUser', Users.upDateUser);
 
+router.post('/deleteUser', Users.deleteUser);
+
 router.get('/getUserList', Users.getUserList);
 
 router.post('/setAdmin', Users.setAdmin);

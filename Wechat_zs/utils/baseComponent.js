@@ -66,9 +66,11 @@ module.exports = class BaseComponent {
 	insertOperationLog(u_data, info, type, req) {
 		let conf = {
 			'update': '更新了一个业主',
+			'updateuser': '更新了一个用户',
 			'add': '添加了一个业主',
 			'delete': '删除了一个业主',
-			'setadmin': '设置了一个管理员'
+			'setadmin': '设置了一个管理员',
+			'deleteuser': '删除了一个用户'
 		}
 		let param = {
 			userName: u_data.nickname,
