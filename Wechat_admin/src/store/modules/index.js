@@ -4,7 +4,8 @@ import {
 
 const state = {
 	userInfo: storageservice.read('userInfo') || null,
-	editorData: null
+	editorData: null,
+	showRouteAdmin: ['addadmin', 'alluserlist']
 }
 
 const mutations = {

@@ -77,6 +77,11 @@ export default {
 					title: '数据查询'
 				},
 				{
+					icon: 'el-icon-user-solid',
+					index: 'alluserlist',
+					title: '全部用户'
+				},
+				{
 					icon: 'el-icon-s-platform',
 					index: 'addadmin',
 					title: '增加管理员'
@@ -90,6 +95,9 @@ export default {
 		},
 		userInfo() {
 			return this.$store.getters.userInfo;
+		},
+		showRouters() {
+			return this.$store.getters.showRouteAdmin;
 		}
 	},
 	created() {
@@ -99,7 +107,7 @@ export default {
 		});
 		if (this.userInfo && this.userInfo['status'] == 2) {
 			this.items = this.items.filter(item => {
-				return item.index != 'addadmin';
+				return !this.showRouters.includes(item.index);
 			});
 		}
 	},

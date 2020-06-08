@@ -38,6 +38,11 @@ export default new Router({
                     component: resolve => require(['@/page/imageChange.vue'], resolve),
                     meta: { title: '图片修改' }
                 },
+				{
+				    path: '/alluserlist',
+				    component: resolve => require(['@/page/allUserList.vue'], resolve),
+				    meta: { title: '全部用户', permission: true }
+				},
                 {
                     path: '/dataquery',
                     component: resolve => require(['@/page/dataQuery.vue'], resolve),
@@ -83,7 +88,7 @@ export default new Router({
 				    // 增加管理员
 				    path: '/addadmin',
 				    component: resolve => require(['@/page/addAdmin.vue'], resolve),
-				    meta: { title: '增加管理员' }
+				    meta: { title: '增加管理员', permission: true }
 				},
                 {
                     // 权限页面

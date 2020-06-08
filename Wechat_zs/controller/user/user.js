@@ -235,10 +235,57 @@ class Users extends BaseComponent {
 						status: 1
 					},
 					options)
-					super.insertOperationLog(u_data, info, 'setadmin', req);
+				super.insertOperationLog(u_data, info, 'setadmin', req);
 			}
 		} catch (e) {
 			console.log(e.message);
+		}
+	}
+
+	async getUserListByAdmin(req, res, next) {
+		// 查询条件变成正则
+		var findval = new RegExp(req.query.keyword); //查询的时候判断条件加 new RegExp( )即可变成关键字搜索
+		const {
+			pageNum = 1, pageSize = 10
+		} = req.query;
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': _id
+			});
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			let params = {
+				$or: [{
+					nickname: findval
+				}, {
+					mobile: findval
+				}]
+			};
+			// 获取数据库所有用户的长度
+			var count = await await User.countDocuments(params);
+			const data = await User.find(params)
+				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
+				.limit(parseInt(pageSize, 10))
+				.sort({
+					'_id': -1
+				});
+			if (data) {
+				res.send({
+					Code: 1,
+					Message: '获取全部用户数据成功',
+					TotalCount: count,
+					Data: data
+				})
+			} else {
+				return super.returnErrMessage(res, '获取全部用户数据失败');
+			}
+		} catch (err) {
+			return super.returnErrMessage(res, '获取全部用户数据失败', err.message);
 		}
 	}
 }

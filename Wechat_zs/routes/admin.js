@@ -46,4 +46,6 @@ router.post('/updateOwner', [
 
 router.get('/getOperationLog', OperationLogs.getOperationLog);
 
+router.get('/getUserListByAdmin', Users.getUserListByAdmin);
+
 module.exports = router;

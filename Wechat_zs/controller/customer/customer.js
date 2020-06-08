@@ -82,14 +82,6 @@ class Customers extends BaseComponent {
 			if (!info) {
 				return super.returnErrMessage(res, '无法查找到该用户');
 			}
-			// 获取数据库所有业主的长度
-			var count = await Customer.estimatedDocumentCount();
-			if (info.status == 2) { // 如果不是管理员
-				// 获取createrId等于_id的长度
-				count = await Customer.countDocuments({
-					createrId: _id
-				});
-			}
 			let params = {
 				$or: [{
 					customerName: findval
@@ -107,6 +99,8 @@ class Customers extends BaseComponent {
 			};
 			// 如果是管理员查找所有的业主, 否则查找自己创建的业主
 			info.status == 1 ? '' : params.createrId = _id;
+			// 获取数据库所有业主的长度
+			var count = await Customer.countDocuments(params);
 			const data = await Customer.find(params)
 				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
 				.limit(parseInt(pageSize, 10))

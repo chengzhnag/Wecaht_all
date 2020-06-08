@@ -66,6 +66,14 @@ export const getUserList = query => {
 	});
 };
 
+export const getUserListByAdmin = query => {
+	return request({
+		url: '/admin/getUserListByAdmin',
+		method: 'get',
+		params: query
+	});
+};
+
 export const setAdmin = data => {
 	return request({
 		url: '/api/setAdmin',

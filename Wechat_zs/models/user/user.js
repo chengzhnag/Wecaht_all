@@ -40,9 +40,6 @@ const userSchema = new Schema({
 	birthday: {
 		type: Date
 	},
-	photo_number: {
-		type: String
-	},
 	status: {
 		type: Number,
 		// 权限 1最高管理员 2正常用户
