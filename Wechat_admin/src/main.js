@@ -27,6 +27,8 @@ Vue.filter("filterImg", function(url) {
     if (!/data:image\/([^;]+).*/.test(url)) {
       if (url.indexOf('public') == 0) {
 		  url = host + url.replace('public', '');
+	  }else {
+		  url = host + url;
 	  }
     }
   }
