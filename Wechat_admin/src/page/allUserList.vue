@@ -40,25 +40,29 @@
 				<el-button type="primary" @click="deleteRow">确 定</el-button>
 			</span>
 		</el-dialog>
-		<el-dialog title="编辑" :visible.sync="isShowEditor">
-			<el-form :model="form" label-position="right">
-				<el-form-item label="姓名" prop="nickname" required label-width="100px">
+		<el-dialog title="编辑" :visible.sync="isShowEditor" :close-on-click-modal="false">
+			<el-form ref="form" :model="form" label-position="right" label-width="100px">
+				<el-form-item label="姓名" prop="nickname" required :rules="[{ required: true, message: '姓名不能为空' }]">
 					<el-col :span="11"><el-input v-model="form.nickname"></el-input></el-col>
 				</el-form-item>
-				<el-form-item label="手机号" prop="mobile" required label-width="100px">
+				<el-form-item label="手机号" prop="mobile" required :rules="[{ required: true, message: '手机号不能为空' }]">
 					<el-col :span="11"><el-input v-model="form.mobile"></el-input></el-col>
 				</el-form-item>
-				<el-form-item label="性别" label-width="100px">
+				<el-form-item label="性别">
 					<el-radio-group v-model="form.gender">
 						<el-radio :label="-1">未知</el-radio>
 						<el-radio :label="1">男</el-radio>
 						<el-radio :label="0">女</el-radio>
 					</el-radio-group>
 				</el-form-item>
-				<el-form-item label="出生年月" label-width="100px">
-					<el-col :span="11"><el-date-picker type="date" placeholder="选择日期" v-model="form.birthday" style="width: 100%;"></el-date-picker></el-col>
+				<el-form-item label="出生年月">
+					<el-col :span="11">
+						<el-date-picker type="date" placeholder="选择日期" v-model="form.birthday" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
+							style="width: 100%;">
+						</el-date-picker>
+					</el-col>
 				</el-form-item>
-				<el-form-item label="头像" label-width="100px">
+				<el-form-item label="头像">
 					<el-upload
 						name="myfile"
 						id="myfile"
@@ -67,12 +71,13 @@
 						:show-file-list="false"
 						:on-success="avatarSuccess"
 						:before-upload="beforeAvatarUpload"
+						:on-error="uploadError"
 					>
 						<img v-if="form.avatar" :src="form.avatar | filterImg" class="avatar" />
 						<i v-else class="el-icon-plus avatar-uploader-icon"></i>
 					</el-upload>
 				</el-form-item>
-				<el-form-item label="是否管理员" label-width="100px">
+				<el-form-item label="是否管理员">
 					<el-radio-group v-model="form.status">
 						<el-radio :label="2">普通用户</el-radio>
 						<el-radio :label="1">管理员</el-radio>
@@ -81,14 +86,14 @@
 			</el-form>
 			<div slot="footer" class="dialog-footer">
 				<el-button @click="isShowEditor = false">取 消</el-button>
-				<el-button type="primary" @click="isShowEditor = false">确 定</el-button>
+				<el-button type="primary" @click="submitForm('form')">确 定</el-button>
 			</div>
 		</el-dialog>
 	</div>
 </template>
 
 <script>
-import { getUserListByAdmin, deleteUser, uploadUrl } from '@/api';
+import { getUserListByAdmin, deleteUser, uploadUrl, upDateUser } from '@/api';
 export default {
 	name: 'imagechange',
 	data() {
@@ -101,7 +106,7 @@ export default {
 			delVisible: false,
 			idx: 0,
 			totalCount: 0,
-			sexTexts: ['未知', '男', '女'],
+			sexTexts: ['未知', '女', '男'],
 			deleteType: '',
 			isShowEditor: false,
 			form: {
@@ -110,7 +115,8 @@ export default {
 				gender: -1,
 				birthday: new Date(),
 				avatar: '',
-				status: 2
+				status: 2,
+				_id: ''
 			},
 			uploadUrl: uploadUrl
 		};
@@ -121,7 +127,11 @@ export default {
 	activated() {
 		this.getData();
 	},
-	computed: {},
+	computed: {
+		userInfo() {
+			return this.$store.getters.userInfo || '';
+		}
+	},
 	methods: {
 		// 分页导航
 		handleCurrentChange(val) {
@@ -151,7 +161,7 @@ export default {
 					}
 				})
 				.catch(err => {
-					this.$message.error(err || '获取数据失败');
+					this.$message.error(err.message || '获取数据失败');
 				});
 		},
 		search() {
@@ -225,18 +235,56 @@ export default {
 			console.log(res);
 			console.log(file);
 			console.log(fileList);
+			if (res.Code === 1) {
+				this.form.avatar = res.Data.path;
+			} else {
+				this.$message.error(res.Message || '上传失败, 请重试');
+			}
 		},
 		beforeAvatarUpload(file) {
-			const isJPG = file.type === 'image/jpeg';
+			console.log(file);
+			let types = ['image/png', 'image/jpeg'];
+			const isJPG = types.includes(file.type);
 			const isLt2M = file.size / 1024 / 1024 < 2;
 
 			if (!isJPG) {
-				this.$message.error('上传头像图片只能是 JPG 格式!');
+				this.$message.error('上传头像图片只能是 JPG/PNG 格式!');
 			}
 			if (!isLt2M) {
 				this.$message.error('上传头像图片大小不能超过 2MB!');
 			}
 			return isJPG && isLt2M;
+		},
+		uploadError(err, file, fileList) {
+			console.log(err);
+			this.$message.error(file.name + '上传失败');
+		},
+		submitForm(formName) {
+			this.$refs[formName].validate(valid => {
+				console.log(valid);
+				if (valid) {
+					console.log(this.form);
+					upDateUser(this.form)
+						.then(res => {
+							if (res.Code === 1) {
+								if (this.form._id == this.userInfo._id) {
+									this.$store.commit('index/SET_USERINFO', Object.assign(this.userInfo, this.form));
+								}
+								this.$message({
+									message: `编辑用户${this.form.nickname}成功`,
+									type: 'success'
+								});
+								this.getData();
+								this.isShowEditor = false;
+							} else {
+								this.$message.error(res.Message || '编辑失败');
+							}
+						})
+						.catch(err => {
+							this.$message.error(err.message || '编辑失败');
+						});
+				}
+			});
 		}
 	}
 };

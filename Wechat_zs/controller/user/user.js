@@ -104,7 +104,7 @@ class Users extends BaseComponent {
 				return super.returnErrMessage(res, '管理员才可以更新其他用户, 更新失败');
 			}
 			// 通过id更新整条记录
-			await User.update({
+			await User.updateOne({
 				_id: body._id
 			}, body);
 			// 插入一条操作日志
@@ -114,7 +114,6 @@ class Users extends BaseComponent {
 				Message: '更新成功'
 			})
 		} catch (err) {
-			console.log(err);
 			return super.returnErrMessage(res, '更新用户数据失败', err.message);
 		}
 	}
@@ -311,7 +310,7 @@ class Users extends BaseComponent {
 			};
 			// 获取数据库所有用户的长度
 			var count = await await User.countDocuments(params);
-			const data = await User.find(params)
+			const data = await User.find(params, '-__v -openId -password')
 				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
 				.limit(parseInt(pageSize, 10))
 				.sort({

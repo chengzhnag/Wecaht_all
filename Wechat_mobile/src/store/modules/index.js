@@ -12,7 +12,7 @@ import {
 } from '@/utils/util.js'
 
 const state = {
-	userInfo: null,
+	userInfo: storage.read('userInfo') || null,
 	token: '',
 	openId: ''
 }

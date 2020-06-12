@@ -38,7 +38,8 @@ const userSchema = new Schema({
 		default: -1
 	},
 	birthday: {
-		type: Date
+		type: Date,
+		default: '1977-01-01'
 	},
 	status: {
 		type: Number,

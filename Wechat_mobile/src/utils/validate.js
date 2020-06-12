@@ -100,17 +100,6 @@ export function validMobile(phone) {
   return true;
 }
 
-export const showLoading = (scope, duration) => {
-  scope.$toast.loading({
-    message: '加载中...',
-    forbidClick: true,
-    duration: duration || 15000
-  });
-}
-export const closeLoading = (scope) => {
-  scope.$toast.clear();
-}
-
 export const checkPassword = (password) => {
   let reg = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[$@$!%*#?&])[A-Za-z\d$@$!%*#?&]{8,20}$/;
   if (reg.test(password)) {

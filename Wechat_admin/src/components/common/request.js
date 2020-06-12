@@ -13,6 +13,10 @@ var loadingInstance;
 service.interceptors.request.use(
 	config => {
 		console.log('config: ', config);
+		let countdown = store.getters.countdown;
+		if (!compare(countdown)) {
+			store.commit('index/SET_COUNTDOWN');
+		}
 		loadingInstance = Loading.service({
 			lock: true,
 			text: 'Loading',
@@ -48,5 +52,14 @@ service.interceptors.response.use(
 		return Promise.reject(error);
 	}
 );
+
+function compare(time) {
+	if (!time) return 0;
+	let num = store.getters.num;
+	let after = new Date().getTime() - time;
+	after = parseInt(after/1000/60, 10);
+	console.log(after);
+	return Boolean(after >= num);
+}
 
 export default service;

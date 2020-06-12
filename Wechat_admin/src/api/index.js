@@ -49,6 +49,13 @@ export const deleteUser = data => {
 		data
 	});
 };
+export const upDateUser = data => {
+	return request({
+		url: '/api/upDateUser',
+		method: 'post',
+		data
+	});
+};
 
 export const updateOwner = data => {
 	return request({

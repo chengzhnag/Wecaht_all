@@ -15,31 +15,40 @@ const routes = [{
 			title: '微信授权'
 		}
 	},
+	// {
+	// 	path: '/entrance',
+	// 	name: 'Entrance',
+	// 	component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/index.vue'),
+	// 	children: [{
+	// 			path: '/home',
+	// 			name: 'Entrance/Home',
+	// 			component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/home.vue'),
+	// 			meta: {
+	// 				keepAlive: true,
+	// 				title: '首页'
+	// 			}
+	// 		},
+	// 		{
+	// 			path: '/my',
+	// 			name: 'Entrance/My',
+	// 			component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/my.vue'),
+	// 			meta: {
+	// 				keepAlive: true,
+	// 				title: '我的'
+	// 			}
+	// 		}
+	// 	],
+	// 	meta: {
+	// 		keepAlive: false
+	// 	}
+	// },
 	{
 		path: '/entrance',
 		name: 'Entrance',
-		component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/index.vue'),
-		children: [{
-				path: '/home',
-				name: 'Entrance/Home',
-				component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/home.vue'),
-				meta: {
-					keepAlive: true,
-					title: '首页'
-				}
-			},
-			{
-				path: '/my',
-				name: 'Entrance/My',
-				component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/my.vue'),
-				meta: {
-					keepAlive: true,
-					title: '我的'
-				}
-			}
-		],
+		component: () => import( /* webpackChunkName: "entrance" */ '../views/entrance/entrance.vue'),
 		meta: {
-			keepAlive: false
+			keepAlive: false,
+			title: '首页'
 		}
 	},
 	{
