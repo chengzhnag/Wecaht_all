@@ -70,6 +70,24 @@ const routes = [{
 		}
 	},
 	{
+		path: '/query',
+		name: 'Query',
+		component: () => import( /* webpackChunkName: "index" */ '../views/query.vue'),
+		meta: {
+			keepAlive: false,
+			title: '业主查询'
+		}
+	},
+	{
+		path: '/message',
+		name: 'Message',
+		component: () => import( /* webpackChunkName: "index" */ '../views/message.vue'),
+		meta: {
+			keepAlive: false,
+			title: '个人信息'
+		}
+	},
+	{
 		// 404 page must be placed at the end !!!
 		path: '/404',
 		name: '404',

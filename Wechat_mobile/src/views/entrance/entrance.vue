@@ -19,20 +19,20 @@ export default {
 					name: '业主查询',
 					desc: '通过手机号精准查询业主信息',
 					status: '3',
-					router: 'clock'
+					router: 'query'
 				},
 				{
 					name: '添加业主',
 					desc: '根据表单完整填写信息, 添加业主',
 					status: '1',
 					router: 'addCustomer'
-				},
+				}/* ,
 				{
 					name: '个人信息',
 					desc: '查看自己的信息并编辑',
 					status: '2',
-					router: 'citymonitor'
-				}
+					router: 'message'
+				} */
 			]
 		};
 	},

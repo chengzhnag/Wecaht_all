@@ -48,4 +48,6 @@ router.get('/getOperationLog', OperationLogs.getOperationLog);
 
 router.get('/getUserListByAdmin', Users.getUserListByAdmin);
 
+router.get('/getCustomerByMobile', Customers.getCustomerByMobile);
+
 module.exports = router;

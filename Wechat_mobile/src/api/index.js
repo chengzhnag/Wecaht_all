@@ -38,3 +38,11 @@ export const addCustomer = data => {
 		data
 	});
 };
+
+export const getCustomerByMobile = query => {
+	return request({
+		url: '/admin/getCustomerByMobile',
+		method: 'get',
+		params: query
+	});
+};

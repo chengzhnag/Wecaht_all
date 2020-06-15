@@ -27,7 +27,7 @@
 </template>
 
 <script>
-import { passwrodMd5, validMobile, showLoading, closeLoading } from '@/utils/validate.js';
+import { passwrodMd5, validMobile } from '@/utils/validate.js';
 export default {
 	data() {
 		return {
@@ -58,12 +58,12 @@ export default {
 				nickname: this.nickname,
 				password: passwrodMd5(this.password)
 			};
-			showLoading(this);
+			
 			this.$store
 				.dispatch('index/register', params)
 				.then(res => {
 					console.log(res);
-					closeLoading(this);
+					
 					if (res.Code) {
 						this.$router.go(-1);
 					} else {
@@ -71,8 +71,8 @@ export default {
 					}
 				})
 				.catch(err => {
-					closeLoading(this);
-					this.$toast(err || '提交表单失败, 请稍后重试.');
+					
+					this.$toast(err.message || '提交表单失败, 请稍后重试.');
 				});
 		}
 	}
