@@ -1,7 +1,9 @@
 import axios from 'axios';
+import store from '@/store';
 import {
 	Toast
 } from 'vant';
+
 
 const service = axios.create({
 	baseURL: process.env.VUE_APP_BASE_API,
@@ -16,6 +18,9 @@ service.interceptors.request.use(
 			duration: 15000
 		});
 		console.log('config: ', config);
+		if (store.getters.userInfo) {
+			config.headers['zsid'] = store.getters.userInfo._id;
+		}
 		return config;
 	},
 	error => {
