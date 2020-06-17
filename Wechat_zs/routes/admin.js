@@ -25,6 +25,8 @@ router.post('/addCustomer', [
 
 router.post('/upload', upload.single('myfile'), Customers.upload);
 
+router.post('/anyupload', upload.array('myfile', 10), Customers.anyupload);
+
 router.get('/getLoginLog', LoginLogs.getLoginLog);
 
 router.get('/getOwnerList', Customers.getOwnerList);

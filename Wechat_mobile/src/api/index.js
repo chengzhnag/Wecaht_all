@@ -21,7 +21,7 @@ export const uploadUrl = process.env.VUE_APP_BASE_API + '/admin/upload';
 
 export const fileUpload = data => {
 	return request({
-		url: '/admin/upload',
+		url: '/admin/anyupload',
 		method: 'post',
 		data,
 		headers: {

@@ -107,8 +107,8 @@ export default {
                             title: '提示',
                             message: `添加业主${this.params.customerName}成功`,
                         }).then(() => {
-							// on close
-							this.$router.back();
+                            // on close
+                            this.$router.back();
                         });
                     } else {
                         this.$toast.fail(res.Message || '添加业主失败');
@@ -121,25 +121,28 @@ export default {
         afterRead(file) {
             console.log(file);
             const formData = new FormData(); // 声明一个FormData对象
-            formData.append('myfile', file.file);
-            file.status = 'uploading';
-            file.message = '上传中...';
+            if (file.length) {
+                file.forEach(item => {
+                    formData.append('myfile', item.file);
+                })
+            } else {
+                formData.append('myfile', file.file);
+            }
+            this.funcUpload(formData);
+        },
+        funcUpload(formData) {
             fileUpload(formData)
                 .then(res => {
                     if (res.Code) {
-                        this.params.uploadPhotos.push(res.Data);
-                        file.status = 'done';
-                        file.message = '上传成功';
+                        this.params.uploadPhotos = this.params.uploadPhotos.concat(res.Data);
                         console.log(this.params.uploadPhotos);
                     } else {
-                        file.status = 'failed';
-                        file.message = '上传失败';
+                        this.$toast.fail(res.Message || '上传失败');
                     }
                 })
                 .catch(err => {
                     console.log(err);
-                    file.status = 'failed';
-                    file.message = '上传失败';
+                    this.$toast(err.message || '上传失败');
                 });
         },
         deleteImg(file, name) {

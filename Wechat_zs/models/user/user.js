@@ -17,6 +17,10 @@ const userSchema = new Schema({
 		type: String,
 		required: true
 	},
+	area: {
+		type: String,
+		required: true
+	},
 	password: {
 		type: String,
 		required: true

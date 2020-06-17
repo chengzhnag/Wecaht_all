@@ -65,6 +65,19 @@ class Customers extends BaseComponent {
 			Data: req.file
 		})
 	}
+	anyupload(req, res, next) {
+		if (!req.files.length) {
+			return super.returnErrMessage(res, '上传文件失败');
+		}
+		req.files.forEach(item=> {
+			item.path = _config.uploadUrl + _config.uploadDir + item.filename;
+		})
+		res.send({
+			Code: 1,
+			Message: '上传成功',
+			Data: req.files
+		})
+	}
 	async getOwnerList(req, res, next) {
 		// 查询条件变成正则
 		var findval = new RegExp(req.query.keyword); //查询的时候判断条件加 new RegExp( )即可变成关键字搜索
