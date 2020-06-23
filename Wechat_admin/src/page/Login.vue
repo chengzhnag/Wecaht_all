@@ -47,9 +47,22 @@ export default {
 					login(params)
 						.then(res => {
 							if (res.Code === 1) {
-								Message.success(res.Message);
-								this.$store.commit('index/SET_USERINFO', res.Data);
-								_this.$router.push('/dashboard');
+								let _code = res.Data.registerExamine;
+								switch (_code) {
+									case 0:
+										Message('注册申请已被拒绝, 请联系管理员');
+										break;
+									case 1:
+										Message('注册申请正在审核中, 请耐心等待');
+										break;
+									case 2:
+										Message.success(res.Message);
+										this.$store.commit('index/SET_USERINFO', res.Data);
+										_this.$router.push('/dashboard');
+										break;
+									default:
+										break;
+								}
 							} else {
 								Message.error(res.Message);
 							}

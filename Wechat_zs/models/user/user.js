@@ -50,6 +50,12 @@ const userSchema = new Schema({
 		// 权限 1最高管理员 2正常用户
 		enum: [1, 2],
 		default: 2
+	},
+	registerExamine: {
+		type: Number,
+		// 注册审核状态值 0 拒绝 1 待审核 2 审核通过
+		enum: [0, 1, 2],
+		default: 1
 	}
 })
 

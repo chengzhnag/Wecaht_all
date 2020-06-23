@@ -1,12 +1,14 @@
 <template>
-	<div class="box">正在获取微信授权...</div>
+	<div class="box">{{ showText }}</div>
 </template>
 
 <script>
 import { getUrlKey } from '@/utils/util.js';
 export default {
 	data() {
-		return {};
+		return {
+			showText: '正在获取微信授权...'
+		};
 	},
 	mounted() {
 		console.log(process.env.NODE_ENV);
@@ -23,9 +25,23 @@ export default {
 				.dispatch('index/getUserInfoByToken')
 				.then(res => {
 					console.log(res);
-					this.$router.push({
-						name: 'Entrance'
-					});
+					let _code = res.registerExamine;
+					switch (_code) {
+						case 0:
+							this.showText = '注册申请已被拒绝, 请联系管理员';
+							break;
+						case 1:
+							this.showText = '注册申请正在审核中, 请耐心等待';
+							break;
+						case 2:
+							this.$router.push({
+								name: 'Entrance'
+							});
+							break;
+						default:
+							this.showText = '注册申请正在审核中, 请耐心等待';
+							break;
+					}
 				})
 				.catch(err => {
 					console.log(err);

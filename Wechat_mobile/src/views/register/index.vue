@@ -56,7 +56,6 @@ export default {
                 .dispatch('index/register', params)
                 .then(res => {
                     console.log(res);
-
                     if (res.Code) {
                         this.$router.go(-1);
                     } else {

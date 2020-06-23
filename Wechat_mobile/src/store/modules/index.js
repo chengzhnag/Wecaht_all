@@ -98,8 +98,10 @@ const actions = {
 		return new Promise((resolve, reject) => {
 			register(params).then(response => {
 				console.log(response);
-				let _data = response.Data;
-				commit('SET_USERINFO', _data);
+				if (response.Code == 1) {
+					let _data = response.Data;
+					commit('SET_USERINFO', _data);
+				}
 				resolve(response);
 			}).catch(error => {
 				reject(error);

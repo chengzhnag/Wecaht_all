@@ -58,14 +58,10 @@ class Users extends BaseComponent {
 			var _filter = {
 				$or: [ // 多字段同时匹配
 					{
-						mobile: {
-							$regex: body.mobile
-						}
+						mobile: body.mobile
 					},
 					{
-						openId: {
-							$regex: body.openId
-						}
+						openId: body.openId
 					}
 				]
 			}
@@ -274,8 +270,8 @@ class Users extends BaseComponent {
 					new: true
 				};
 				await User.findOneAndUpdate(query, {
-					status: 1
-				},
+						status: 1
+					},
 					options)
 				super.insertOperationLog(u_data, info, 'setadmin', req);
 			}
@@ -328,6 +324,50 @@ class Users extends BaseComponent {
 			}
 		} catch (err) {
 			return super.returnErrMessage(res, '获取全部用户数据失败', err.message);
+		}
+	}
+
+	async getWaitAuditList(req, res, next) {
+		const {
+			pageNum = 1, pageSize = 10
+		} = req.query;
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': _id
+			});
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			let params = {
+				$or: [{
+					registerExamine: 0
+				}, {
+					registerExamine: 1
+				}]
+			};
+			// 获取数据库所有用户的长度
+			var count = await await User.countDocuments(params);
+			const data = await User.find(params, '-__v -openId -password')
+				.skip((parseInt(pageNum, 10) - 1) * parseInt(pageSize, 10))
+				.limit(parseInt(pageSize, 10))
+				.sort({
+					'_id': -1
+				});
+			if (data) {
+				res.send({
+					Code: 1,
+					Message: '获取待审核用户数据成功',
+					TotalCount: count,
+					Data: data
+				})
+			} else {
+				return super.returnErrMessage(res, '获取待审核用户数据失败');
+			}
+		} catch (err) {
+			return super.returnErrMessage(res, '获取待审核用户数据失败', err.message);
 		}
 	}
 }
