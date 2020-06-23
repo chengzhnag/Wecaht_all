@@ -43,6 +43,11 @@ export default new Router({
 				    component: resolve => require(['@/page/allUserList.vue'], resolve),
 				    meta: { title: '全部用户', permission: true }
 				},
+				{
+				    path: '/audituser',
+				    component: resolve => require(['@/page/auditUser.vue'], resolve),
+				    meta: { title: '用户审核', permission: true }
+				},
                 {
                     path: '/dataquery',
                     component: resolve => require(['@/page/dataQuery.vue'], resolve),

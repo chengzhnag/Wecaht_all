@@ -83,9 +83,14 @@ export default {
 				},
 				{
 					icon: 'el-icon-s-platform',
+					index: 'audituser',
+					title: '用户审核'
+				}
+				/* {
+					icon: 'el-icon-s-platform',
 					index: 'addadmin',
 					title: '增加管理员'
-				}
+				} */
 			]
 		};
 	},

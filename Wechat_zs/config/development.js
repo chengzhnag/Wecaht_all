@@ -24,5 +24,5 @@ module.exports = {
 	},
 	uploadDir: '/uploads/',
 	uploadPath: './public/uploads',
-	uploadUrl: 'http://192.168.0.149:9000'
+	uploadUrl: 'http://192.168.1.100:9000'
 }

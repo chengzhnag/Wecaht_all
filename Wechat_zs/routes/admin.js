@@ -52,4 +52,8 @@ router.get('/getUserListByAdmin', Users.getUserListByAdmin);
 
 router.get('/getCustomerByMobile', Customers.getCustomerByMobile);
 
+router.get('/getWaitAuditList', Users.getWaitAuditList);
+
+router.post('/auditUserByAdmin', Users.auditUserByAdmin);
+
 module.exports = router;

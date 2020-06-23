@@ -270,8 +270,8 @@ class Users extends BaseComponent {
 					new: true
 				};
 				await User.findOneAndUpdate(query, {
-						status: 1
-					},
+					status: 1
+				},
 					options)
 				super.insertOperationLog(u_data, info, 'setadmin', req);
 			}
@@ -302,7 +302,8 @@ class Users extends BaseComponent {
 					nickname: findval
 				}, {
 					mobile: findval
-				}]
+				}],
+				registerExamine: 2
 			};
 			// 获取数据库所有用户的长度
 			var count = await await User.countDocuments(params);
@@ -328,9 +329,12 @@ class Users extends BaseComponent {
 	}
 
 	async getWaitAuditList(req, res, next) {
+		// 查询条件变成正则
+		var findval = new RegExp(req.query.keyword); //查询的时候判断条件加 new RegExp( )即可变成关键字搜索
 		const {
 			pageNum = 1, pageSize = 10
 		} = req.query;
+		// 获取header的id
 		var _id = req.headers.zsid;
 		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		try {
@@ -343,10 +347,11 @@ class Users extends BaseComponent {
 			}
 			let params = {
 				$or: [{
-					registerExamine: 0
+					nickname: findval
 				}, {
-					registerExamine: 1
-				}]
+					mobile: findval
+				}],
+				registerExamine: { $in: [0, 1] }
 			};
 			// 获取数据库所有用户的长度
 			var count = await await User.countDocuments(params);
@@ -359,15 +364,73 @@ class Users extends BaseComponent {
 			if (data) {
 				res.send({
 					Code: 1,
-					Message: '获取待审核用户数据成功',
+					Message: '获取全部用户数据成功',
 					TotalCount: count,
 					Data: data
 				})
 			} else {
-				return super.returnErrMessage(res, '获取待审核用户数据失败');
+				return super.returnErrMessage(res, '获取全部用户数据失败');
 			}
 		} catch (err) {
-			return super.returnErrMessage(res, '获取待审核用户数据失败', err.message);
+			return super.returnErrMessage(res, '获取全部用户数据失败', err.message);
+		}
+	}
+
+	async auditUserByAdmin(req, res, next) {
+		var body = req.body;
+		if (typeof body.status == 'undefined') {
+			return super.returnErrMessage(res, '缺少参数: status');
+		}
+		if (![0, 2].includes(body.status)) {
+			return super.returnErrMessage(res, 'status 只能取值0/2');
+		}
+		// 获取header的id
+		var _id = req.headers.zsid;
+		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': _id
+			});
+			if (!info) {
+				return super.returnErrMessage(res, '无法查找到该用户');
+			}
+			if (info.status == 2) { // 如果不是管理员
+				return super.returnErrMessage(res, '没有权限调用该接口, 请联系管理员');
+			}
+			var ids = body.ids.split(',');
+			for (let i = 0; i < ids.length; i++) {
+				await _this.funcAduitUser(ids[i], body.status);
+			}
+			res.send({
+				Code: 1,
+				Message: `审核用户成功`
+			})
+		} catch (err) {
+			return super.returnErrMessage(res, '审核用户失败', err.message);
+		}
+	}
+
+	async funcAduitUser(id, registerExamine) {
+		try {
+			// 通过_id查找当前操作的用户数据
+			const info = await User.findOne({
+				'_id': id
+			});
+			if (info) {
+				const query = {
+					_id: id
+				};
+				const options = {
+					upsert: true,
+					new: true
+				};
+				await User.findOneAndUpdate(query, {
+					registerExamine: registerExamine
+				},options)
+			}
+		} catch (e) {
+			console.log(e.message);
 		}
 	}
 }

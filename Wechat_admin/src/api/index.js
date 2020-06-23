@@ -89,6 +89,22 @@ export const getUserListByAdmin = query => {
 	});
 };
 
+export const getWaitAuditList = query => {
+	return request({
+		url: '/admin/getWaitAuditList',
+		method: 'get',
+		params: query
+	});
+};
+
+export const auditUserByAdmin = data => {
+	return request({
+		url: '/admin/auditUserByAdmin',
+		method: 'post',
+		data
+	});
+};
+
 export const setAdmin = data => {
 	return request({
 		url: '/api/setAdmin',
