@@ -25,7 +25,8 @@
             <el-table-column align="center" prop="nickname" label="姓名"></el-table-column>
             <el-table-column align="center" prop="mobile" label="手机号"></el-table-column>
             <el-table-column align="center" prop="sex" label="性别"></el-table-column>
-            <el-table-column align="center" prop="isAdmin" label="是否管理员"></el-table-column>
+            <el-table-column align="center" prop="area" label="所属区域"></el-table-column>
+            <!-- <el-table-column align="center" prop="isAdmin" label="是否管理员"></el-table-column> -->
             <el-table-column align="center" prop="auditText" label="审核状态"></el-table-column>
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
@@ -110,7 +111,7 @@ export default {
                         for (let i = 0; i < _data.length; i++) {
                             _data[i].createTime = this.$utils.parseTime(_data[i].createTime);
                             _data[i].sex = this.sexTexts[_data[i].gender + 1];
-                            _data[i].isAdmin = _data[i].status - 1 ? '普通用户' : '管理员';
+                            // _data[i].isAdmin = _data[i].status - 1 ? '普通用户' : '管理员';
                             _data[i].auditText = _data[i].registerExamine ? '待审核' : '已拒绝';
                         }
                         this.tableData = _data;

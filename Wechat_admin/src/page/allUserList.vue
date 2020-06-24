@@ -24,6 +24,7 @@
             <el-table-column align="center" prop="nickname" label="姓名"></el-table-column>
             <el-table-column align="center" prop="mobile" label="手机号"></el-table-column>
             <el-table-column align="center" prop="sex" label="性别"></el-table-column>
+            <el-table-column align="center" prop="area" label="所属区域"></el-table-column>
             <el-table-column align="center" prop="isAdmin" label="是否管理员"></el-table-column>
             <el-table-column label="操作" width="200" align="center">
                 <template slot-scope="scope">
