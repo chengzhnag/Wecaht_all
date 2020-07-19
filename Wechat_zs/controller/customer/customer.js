@@ -163,6 +163,7 @@ class Customers extends BaseComponent {
 			await Customer.remove({
 				_id: body._id
 			});
+			super.deleteall(info['uploadPhotos']);
 			// 插入一条操作日志
 			super.insertOperationLog(u_data, info, 'delete', req);
 			res.send({
@@ -213,17 +214,7 @@ class Customers extends BaseComponent {
 	async getCustomerByMobile(req, res, next) {
 		const mobile = req.query.mobile || '';
 		if (!mobile) return super.returnErrMessage(res, '缺少参数 mobile');
-		// 获取header的id
-		var _id = req.headers.zsid;
-		if (!_id) return super.returnErrMessage(res, '请传入用户id进行请求');
 		try {
-			// 通过_id查找当前操作的用户数据
-			const info = await User.findOne({
-				'_id': _id
-			});
-			if (!info) {
-				return super.returnErrMessage(res, '无法查找到该用户');
-			}
 			const data = await Customer.findOne({
 				'customerMobil': mobile
 			}, '-__v -_id');

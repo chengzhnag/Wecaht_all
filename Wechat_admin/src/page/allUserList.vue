@@ -64,6 +64,11 @@
                     <el-radio :label="0">女</el-radio>
                 </el-radio-group>
             </el-form-item>
+            <el-form-item label="所属区域" prop="area">
+                <el-col :span="11">
+                    <el-input v-model="form.area"></el-input>
+                </el-col>
+            </el-form-item>
             <el-form-item label="出生年月">
                 <el-col :span="11">
                     <el-date-picker type="date" placeholder="选择日期" v-model="form.birthday" format="yyyy 年 MM 月 dd 日" value-format="yyyy-MM-dd">
@@ -124,6 +129,7 @@ export default {
                 nickname: '',
                 mobile: '',
                 gender: -1,
+                area: '',
                 birthday: new Date(),
                 avatar: '',
                 status: 2,
@@ -197,6 +203,7 @@ export default {
         handleEdit(index, row) {
             this.idx = index;
             let data = this.tableData[index];
+            this.init();
             for (var key in data) {
                 if (Object.prototype.hasOwnProperty.call(this.form, key) === true) {
                     //此处hasOwnProperty是判断自有属性，使用 for in 循环遍历对象的属性时，原型链上的所有属性都将被访问会避免原型对象扩展带来的干扰
@@ -206,6 +213,19 @@ export default {
             this.form.password = '';
             console.log(this.form);
             this.isShowEditor = true;
+        },
+        init() {
+            this.form = {
+                nickname: '',
+                mobile: '',
+                gender: -1,
+                area: '',
+                birthday: new Date(),
+                avatar: '',
+                status: 2,
+                _id: '',
+                password: ''
+            };
         },
         handleDelete(index, row) {
             this.idx = index;

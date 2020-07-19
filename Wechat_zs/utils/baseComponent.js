@@ -1,6 +1,8 @@
 const LoginLog = require('../models/loginLog/loginLog.js');
 const OperationLog = require('../models/operationLog/operationLog.js');
 const dtime = require('time-formater');
+const fs = require('fs');
+const path = require('path');
 
 var _this;
 module.exports = class BaseComponent {
@@ -53,7 +55,7 @@ module.exports = class BaseComponent {
 			permissions: data.status
 		}
 		var log = new LoginLog(param);
-		log.save(function(err, res) {
+		log.save(function (err, res) {
 			if (err) {
 				console.log("Error:" + err);
 			} else {
@@ -82,7 +84,7 @@ module.exports = class BaseComponent {
 		}
 
 		var log = new OperationLog(param);
-		log.save(function(err, res) {
+		log.save(function (err, res) {
 			if (err) {
 				console.log("Error:" + err);
 			} else {
@@ -101,5 +103,20 @@ module.exports = class BaseComponent {
 			req.connection.remoteAddress || // 判断 connection 的远程 IP
 			req.socket.remoteAddress || // 判断后端的 socket 的 IP
 			req.connection.socket.remoteAddress;
+	}
+
+	// 删除文件
+	deleteall(files = []) { // 删除path目录下所有文件包括本身
+		try {
+			let _path = _config.uploadPath;
+			if (fs.existsSync(_path) && files) {
+				files.forEach((item) => {
+					var curPath = _path + "/" + item['filename'];
+					fs.unlinkSync(curPath);
+				});
+			}
+		} catch (error) {
+			console.log(error);
+		}
 	};
 }
